@@ -1,5 +1,6 @@
 # BombScheduling
-The app that attacks your schedule! *made at Student Hack V*
+The app that attacks your schedule! 
+######*made at Student Hack V*
 
 ### Do you often forget to check your todo list?
 
