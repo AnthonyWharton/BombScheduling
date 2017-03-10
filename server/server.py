@@ -2,13 +2,11 @@
 from http.server import HTTPServer
 from http.server import BaseHTTPRequestHandler
 import cgi
-import integrations
 import sys
 import inspect
 import pkgutil
 from os import listdir, path
 from os.path import isfile, join
-from integrations import test_integration
 
 path = "../apis"
 onlyfiles = [f[:-3] for f in listdir(path) if isfile(join(path, f))]
