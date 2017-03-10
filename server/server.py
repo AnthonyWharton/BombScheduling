@@ -10,7 +10,7 @@ from os import listdir, path
 from os.path import isfile, join
 from integrations import test_integration
 
-path = "integrations"
+path = "../apis"
 onlyfiles = [f[:-3] for f in listdir(path) if isfile(join(path, f))]
 modules = []
 classes = []
