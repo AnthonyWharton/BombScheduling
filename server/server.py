@@ -51,7 +51,7 @@ class bomb():
                 print(datalist[i])
                 print(self.msg)
                 integrations[i].function(datalist[i], self.msg)
-        del bombs[self.bid]
+        done_bombs.append(self.bid)
 
 def turn_json_into_classes(jsonstring):
     keys = jsonstring[1:-1].split(",")
@@ -157,6 +157,7 @@ print(bigjs)
 
 userstosessions = {}
 sessionstousers = {}
+done_bombs = []
 
 class SimpleEcho(WebSocket):
 
@@ -179,8 +180,7 @@ class SimpleEcho(WebSocket):
                         self.sendMessage(op + "Invalid " + integrations[i].name)
                         return 
                 uid = randint(0, 10000000)
-                while(uid in list(users.keys)):
-                    print("UID " + str(uid) + " Already taken")
+                while(uid in list(users.keys())):
                     uid = randint(0, 10000000)
                 users[uid] = user(uid, classes)
                 self.sendMessage(op + str(uid))
@@ -189,7 +189,7 @@ class SimpleEcho(WebSocket):
                 data = json.loads(data)
                 print(data)
                 bid = randint(0, 10000000)
-                while(bid in list(bombs.keys)):
+                while(bid in list(bombs.keys())):
                     print("BID " + str(bid) + " Already taken")
                     bid = randint(0, 10000000)
                 title = data["title"]
@@ -197,11 +197,13 @@ class SimpleEcho(WebSocket):
                 time = data["time"]
                 uid = data["uid"]
                 msg = message(body, title)
+                print("Got here")
                 if uid not in list(users.keys()):
+                    print("Scheduling Failure")
                     self.sendMessage(op + "Failure")
                 else:
-                    bombs[bid] = bomb(time, uid, msg)
-                    print(bombs)
+                    bombs[bid] = bomb(time, uid, msg, bid)
+                    print("Scheduling Success")
                     self.sendMessage(op + "Success")
             elif op == "LGN":
                 print("LGN request recieved from " + str(self.address[0]))
@@ -236,8 +238,11 @@ def doClock():
     print("clocking")
     while(True):
         time.sleep(5)
-        for bomb in bombs.items():
+        for bomb in bombs.values():
             bomb.check() 
+        for bomb in done_bombs:
+            del bombs[bomb]
+        done_bombs = []
 
 server_thread = threading.Thread(target=doServer)
 server_thread.daemon = True
