@@ -173,8 +173,11 @@ class SimpleEcho(WebSocket):
                 message = data["message"]
                 time = data["time"]
                 uid = data["uid"]
-                bombs.append(bomb(time, uid))
-                self.sendMessage(op + "Success")
+                if uid not in list(users.keys):
+                    self.sendMessage(op + "Failure")
+                else:
+                    bombs.append(bomb(time, uid))
+                    self.sendMessage(op + "Success")
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
                 self.sendMessage(op + "Pong")
