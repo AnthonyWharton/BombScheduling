@@ -19,15 +19,19 @@ class TwitterMessage():
     def create(self):
         self.twitter_username = ""
 
-def send(msg):
-    tweet = "@" + msg.twitter_username + " " + msg.twitter_message
-    status = api.update_status(status=tweet)
+def send(details, msg):
+    tweet = "@" + details.twitter_username + " " + msg.message_body
+    try:
+        status = api.update_status(status=tweet)
+    except tweepy.error.TweepError:
+        print("Failed to tweet due to duplicate message")
 
 # def test():
-#     msg = TwitterMessage()
+#     details = TwitterMessage()
 #     # msg.create("***REMOVED***", "Howdy", "Hello, World!")
-#     msg.twitter_username = "***REMOVED***"
-#     msg.twitter_message  = "WORK"
-#     send(msg)
+#     details.twitter_username = "***REMOVED***"
+#     msg  = message()
+#     msg.message_body = "Hello!"
+#     send(details, msg)
 #
 # test()

@@ -29,7 +29,7 @@ def send(details, msg):
     body = msg.message_body
     message.attach(email.mime.text.MIMEText(body, 'plain'))
     text = message.as_string()
-    server.sendmail(fromaddr, msg.email_address, text)
+    server.sendmail(fromaddr, details.email_address, text)
 
 # server.quit()
 
