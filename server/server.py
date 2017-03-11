@@ -164,10 +164,7 @@ class SimpleEcho(WebSocket):
                 print("USR request recieved from " + str(self.address[0]))
                 data = json.loads(data)
                 uid = randint(0, 10000000)
-                print(uid)
-                print(users)
                 users[uid] = user(uid, self, data)
-                print(users)
                 self.sendMessage(op + str(uid))
             elif op == "BMB":
                 print("BMB request recieved from " + str(self.address[0]))
