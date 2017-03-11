@@ -7,6 +7,36 @@ import inspect
 import pkgutil
 from os import listdir, path
 from os.path import isfile, join
+import json
+from collections import namedtuple
+
+class dog:
+    name = "test"
+    age = 15
+
+    def __init__(self):
+        pass
+    def create(self, a, b):
+        self.name = a
+        self.age = b
+
+def toJSON(obj):
+    # return json.dumps(obj, default=lambda o: o.dict,
+        #    sort_keys=True, indent=4)
+    return json.dumps(obj.__dict__)
+
+def fromJSON(obj, cl):
+    p = cl()
+    p.__dict__ = json.loads(obj)
+    return p
+
+d = dog()
+print(d)
+d.create("bob", 5)
+jd = toJSON(d)
+print(jd)
+d2 = fromJSON(jd, dog)
+print(d2)
 
 class integration:
     def __init__(self, k, f):
@@ -23,14 +53,16 @@ for loader, module_name, is_pkg in pkgutil.iter_modules([path]):
         modules = loader.find_module(module_name).load_module(module_name)
         print ("MODULE", modules)
         print (inspect.getmembers(modules, predicate=inspect.isclass))
-        data = [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1]
-        function = [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isfunction) if func[0].startswith('_') is False ][::-1]
+        data = [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1][0]
+        function = [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isfunction) if func[0].startswith('_') is False ][::-1][0]
         integrations.append(integration(data, function)) 
 
 print("FINISHED LOADING MODULES")
 
 print (integrations)
 
+for (data, _) in integrations:
+    print (toJSON(data))
 
 
 
