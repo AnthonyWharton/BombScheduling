@@ -15,26 +15,6 @@ import threading
 import pickle
 from random import randint
 
-userfile = open("users.encrypted", "rb")
-bombfile = open("bombs.encrypted", "rb")
-
-try:
-    users = pickle.load(userfile)
-except EOFError:
-    print("Regenerating users")
-    users = {}
-try:
-    bombs = pickle.load(bombfile)
-except EOFError:
-    print("Regenerating bombs")
-    bombs = []
-
-print (users)
-print (bombs)
-
-userfile.close()
-bombfile.close()
-
 class message():
     def __init__(self):
         pass
@@ -91,6 +71,26 @@ class bomb():
             print(msg)
             integrations[i].function(datalist[i], msg)
         bombs.remove(self)
+
+userfile = open("users.encrypted", "rb")
+bombfile = open("bombs.encrypted", "rb")
+
+try:
+    users = pickle.load(userfile)
+except EOFError:
+    print("Regenerating users")
+    users = {}
+try:
+    bombs = pickle.load(bombfile)
+except EOFError:
+    print("Regenerating bombs")
+    bombs = []
+
+print (users)
+print (bombs)
+
+userfile.close()
+bombfile.close()
 
 def toJSON(obj):
     return json.dumps(obj.__dict__)
