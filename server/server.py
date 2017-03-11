@@ -51,7 +51,7 @@ class bomb():
                 print(datalist[i])
                 print(self.msg)
                 integrations[i].function(datalist[i], self.msg)
-        bombs.remove(self)
+        del bombs[self.bid]
 
 def turn_json_into_classes(jsonstring):
     keys = jsonstring[1:-1].split(",")
@@ -198,7 +198,7 @@ class SimpleEcho(WebSocket):
                 if uid not in list(users.keys()):
                     self.sendMessage(op + "Failure")
                 else:
-                    bombs.append(bomb(time, uid, msg))
+                    bombs[bid] = bomb(time, uid, msg)
                     self.sendMessage(op + "Success")
             elif op == "LGN":
                 print("LGN request recieved from " + str(self.address[0]))
