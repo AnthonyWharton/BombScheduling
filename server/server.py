@@ -165,9 +165,13 @@ class SimpleEcho(WebSocket):
                 valid = True
                 for i in range(len(integrations)):
                     valid = valid and integrations[i].verify(classes[i])
-                uid = randint(0, 10000000)
-                users[uid] = user(uid, classes)
-                self.sendMessage(op + str(uid))
+                print(valid)
+                if valid:
+                    uid = randint(0, 10000000)
+                    users[uid] = user(uid, classes)
+                    self.sendMessage(op + str(uid))
+                else:
+                    self.sendMessage(op + "Pas valide")
             elif op == "BMB":
                 print("BMB request recieved from " + str(self.address[0]))
                 data = json.loads(data)
