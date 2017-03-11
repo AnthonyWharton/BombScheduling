@@ -17,12 +17,16 @@ public class MessageHelper {
     public static final int CONNECTED = 0;
     public static final int DISCONNECTED = 1;
     public static final int NETWORK_ERROR = 2;
+    public static final int RECIEVED_MODES = 3;
+
+    public static final String K_RECIEVED_MODES = "RM";
 
     public static String messageToString(int what) {
         switch (what) {
-            case CONNECTED:     return "CONNECTED";
-            case DISCONNECTED:  return "DISCONNECTED";
-            case NETWORK_ERROR: return "NETWORK_ERROR";
+            case CONNECTED:      return "CONNECTED";
+            case DISCONNECTED:   return "DISCONNECTED";
+            case NETWORK_ERROR:  return "NETWORK_ERROR";
+            case RECIEVED_MODES: return "RECIEVED_MODES";
         }
         return "ERROR, UNKNOWN MESSAGE";
     }

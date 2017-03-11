@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import bombscheduling.com.bombscheduling.ActivityMain;
 import bombscheduling.com.bombscheduling.Networking.Networking;
 import bombscheduling.com.bombscheduling.R;
 
@@ -36,7 +37,7 @@ public class NewUser extends Fragment {
             public void onClick(View v) {
                 Login newFragment = new Login();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, newFragment);
+                transaction.replace(R.id.fragment_container, newFragment, ActivityMain.FRAGMENT_LOGIN);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 listener.sendMessage(Networking.PING, "you have no friends and you suck lol");
@@ -49,7 +50,7 @@ public class NewUser extends Fragment {
             public void onClick(View v) {
                 Register newFragment = new Register();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, newFragment);
+                transaction.replace(R.id.fragment_container, newFragment, ActivityMain.FRAGMENT_REGISTER);
                 transaction.addToBackStack(null);
                 transaction.setTransition(android.R.style.Animation_Translucent);
                 transaction.commit();
