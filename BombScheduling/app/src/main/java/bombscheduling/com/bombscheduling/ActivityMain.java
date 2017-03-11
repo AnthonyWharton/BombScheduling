@@ -4,8 +4,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import bombscheduling.com.bombscheduling.Fragments.NewUser;
@@ -15,11 +20,16 @@ import static bombscheduling.com.bombscheduling.Networking.MessageHelper.CONNECT
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.MESSAGE_RECEIVED;
 
-public class ActivityMain extends AppCompatActivity {
+public class ActivityMain extends AppCompatActivity
+                          implements NewUser.NewUserToActivityListener {
 
     protected Messenger replyTo = new Messenger(new IncomingHandler());
     protected Messenger sendTo;
     protected Networking connection;
+
+    private FrameLayout fragmentContainer;
+    private ProgressBar connectionWheel;
+    private Boolean     connectedAlert = true;
 
     public class IncomingHandler extends Handler {
         @Override
@@ -27,9 +37,11 @@ public class ActivityMain extends AppCompatActivity {
             switch (msg.what) {
                 case CONNECTED:
                     Toast.makeText(getBaseContext(), "A CONNECTED!", Toast.LENGTH_SHORT);
+                    hideConnectionWheel();
                     break;
                 case DISCONNECTED:
                     Toast.makeText(getBaseContext(), "A DISCONNECTED!", Toast.LENGTH_SHORT);
+                    showConnectionWheel();
                     break;
                 case MESSAGE_RECEIVED:
                     Toast.makeText(getBaseContext(), "A MESSAGE RECEIVED!", Toast.LENGTH_SHORT);
@@ -47,12 +59,37 @@ public class ActivityMain extends AppCompatActivity {
         connection.connect();
     }
 
+    private void hideConnectionWheel() {
+        connectionWheel.setVisibility(View.INVISIBLE);
+        if (connectedAlert) {
+            Snackbar.make(fragmentContainer, "Good to go, all connected!", Snackbar.LENGTH_LONG).show();
+            connectedAlert = false;
+        }
+    }
+
+    private void showConnectionWheel() {
+        connectionWheel.setVisibility(View.VISIBLE);
+        Snackbar.make(fragmentContainer,
+                "Hold on, We're just connecting you to the server..",
+                Snackbar.LENGTH_LONG)
+                .show();
+        connectedAlert =
+                true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initialiseNetworking();
+
+        fragmentContainer = (FrameLayout) findViewById(R.id.fragment_container);
+        connectionWheel   = (ProgressBar) findViewById(R.id.main_connectionWheel);
+        Snackbar.make(fragmentContainer,
+                "Hold on, We're just connecting you to the server..",
+                Snackbar.LENGTH_LONG)
+                .show();
 
         // If we're being restored from a previous state,
         // then we don't need to do anything and should return or else
@@ -83,4 +120,7 @@ public class ActivityMain extends AppCompatActivity {
         super.onRestart();
     }
 
+    public void sendMessage() {
+        connection.sendMessage();
+    }
 }
