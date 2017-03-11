@@ -141,17 +141,16 @@ class SimpleEcho(WebSocket):
             print(self.data)
             op = self.data[:3]
             data = self.data[3:]
-            print(op == "REQ")
             if op == "REQ": 
-                print("REQ request recieved from " + str(self.address))
+                print("REQ request recieved from " + str(self.address[0]))
                 self.sendMessage(bigjs)
             elif op == "USR":
-                print("USR request recieved from " + self.address)
+                print("USR request recieved from " + str(self.address[0]))
                 data = json.loads(data)
                 users.append[user(users.len, self, data) ]
                 self.sendMessage(str(users.len - 1))
             elif op == "BMB":
-                print("BMB request recieved from " + self.address)
+                print("BMB request recieved from " + str(self.address[0]))
                 data = json.loads(data)
                 time = data["time"]
                 id = data["id"]
