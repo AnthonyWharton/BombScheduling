@@ -140,9 +140,7 @@ class SimpleEcho(WebSocket):
         if self.opcode == 1:
             print(self.data)
             op = self.data[:3]
-            print ("op: " + op)
             data = self.data[3:]
-            print ("data: " + data)
             if op == "REQ": 
                 print("REQ request recieved from " + self.address)
                 self.sendMessage(bigjs)
