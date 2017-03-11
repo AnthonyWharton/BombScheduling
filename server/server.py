@@ -33,6 +33,7 @@ class bomb():
      
     def check(self):
         if time.time() > self.time:
+            print("Bomb due for " + self.uid)
             self.dispatch()
 
     def dispatch(self):
@@ -55,8 +56,9 @@ class bomb():
             j += "}"
             print(j)
             datalist.append(fromJSON(j, integration.data))
+        
 
-
+        print("about to start integrating")
         for i in range(len(integrations)):
             print(datalist[i])
             print(self.msg)
