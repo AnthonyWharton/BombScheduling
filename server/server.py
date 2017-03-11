@@ -14,7 +14,6 @@ import time
 import threading
 import pickle
 from random import randint
-
 class message():
     def __init__(self):
         pass
@@ -171,8 +170,8 @@ class SimpleEcho(WebSocket):
                 title = data["title"]
                 message = data["message"]
                 time = data["time"]
-                id = data["id"]
-                bombs.append(bomb(time, users[id]))
+                uid = data["uid"]
+                bombs.append(bomb(time, users[uid]))
                 self.sendMessage(op + "Success")
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
