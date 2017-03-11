@@ -18,6 +18,8 @@ import java.util.Iterator;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.CONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECIEVED_MODES;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_ERROR;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_ID;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_MODES;
 
@@ -49,6 +51,10 @@ public class Networking {
         } else {
             MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(NETWORK_ERROR).build());
         }
+    }
+
+    public Boolean isOpen() {
+        return client.getConnection().isOpen();
     }
 
     public void close() {
@@ -99,6 +105,19 @@ public class Networking {
                     }
                 } else if (opcode.equals(REGISTER_USER)) {
                     // Assigned User ID
+                    try {
+                        JSONObject reader = new JSONObject(data);
+                        int uid = (int) reader.get("user_id");
+                        Bundle b = new Bundle();
+                        if (uid < 0) b.putString(K_USER_ERROR, reader.getString("error"));
+                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
+                                .setWhat(RECIEVED_MODES)
+                                .setArg1(uid)
+                                .setBundle(b)
+                                .build());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 } else if (opcode.equals(BOMB)) {
                     // Success/Failure
                 }
