@@ -17,7 +17,7 @@ class TextMessage():
 
 
 def send(details, msg):
-    return client.message.create(body=msg.message_body, to=details.phone_number, from_=twilnumber)
+    return client.messages.create(body=msg.message_body, to=details.phone_number, from_=twilnumber)
 
     # print(message.sid)
 
