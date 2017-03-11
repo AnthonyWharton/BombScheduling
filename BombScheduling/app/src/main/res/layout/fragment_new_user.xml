@@ -1,0 +1,45 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/newUser_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="Hi! Welcome to Bomb Scheduling!"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+    <TextView
+        android:id="@+id/newUser_subheading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newUser_header"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="Have you registered yet?"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+    <Button
+        android:id="@+id/newUser_yesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newUser_subheading"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:text="Yes, Let me log in!" />
+
+    <Button
+        android:id="@+id/newUser_noButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newUser_yesButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:text="No, let me register!" />
+
+</RelativeLayout>
