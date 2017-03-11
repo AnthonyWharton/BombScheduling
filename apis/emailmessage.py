@@ -31,6 +31,9 @@ def send(details, msg):
     text = message.as_string()
     server.sendmail(fromaddr, details.email_address, text)
 
+def verify(details):
+    return True
+
 # server.quit()
 
 # def test():
