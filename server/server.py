@@ -164,6 +164,7 @@ print(bigjs)
 userstosessions = {}
 sessionstousers = {}
 done_bombs = []
+new_bombs  = []
 
 class SimpleEcho(WebSocket):
 
@@ -210,7 +211,7 @@ class SimpleEcho(WebSocket):
                     print("Got here")
                     print(bomb(int(time), int(uid), msg, int(bid)))
                     print("But not here")
-                    bombs[bid] = bomb(time, uid, msg, bid)
+                    new_bombs.append((bid, bomb(time, uid, msg, bid)))
                     print("Scheduling Success")
                     self.sendMessage(op + "Success")
             elif op == "LGN":
@@ -275,6 +276,9 @@ def doClock():
         for bomb in done_bombs:
             del bombs[bomb]
         done_bombs.clear()
+        for bid, bomb in new_bombs:
+            bombs[bid] = bomb
+        new_bombs.clear()
 
 server_thread = threading.Thread(target=doServer)
 server_thread.daemon = True
