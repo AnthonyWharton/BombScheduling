@@ -39,7 +39,6 @@ public class ActivityMain extends AppCompatActivity
 
     private FrameLayout fragmentContainer;
     private ProgressBar connectionWheel;
-    private Boolean     connectedAlert = true;
     private Boolean     errorShown     = false;
     private long        reconnectTime  = 500;
 
@@ -104,14 +103,10 @@ public class ActivityMain extends AppCompatActivity
 
     public void hideLoadingWheel() {
         connectionWheel.setVisibility(View.INVISIBLE);
-        if (connectedAlert) {
-            connectedAlert = false;
-        }
     }
 
     public void showLoadingWheel() {
         connectionWheel.setVisibility(View.VISIBLE);
-        connectedAlert = true;
     }
 
     @Override
