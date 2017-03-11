@@ -27,16 +27,16 @@ class user():
         self.opts = opts
 
 class bomb():
-    def __init__(self, time, user):
+    def __init__(self, time, uid):
         self.time = time
-        self.user = user
+        self.uid = uid
      
     def check(self):
         if time.time() > self.time:
             self.dispatch()
 
     def dispatch(self):
-        keys = json.dumps(self.user.opts[1:-1].split(","))
+        keys = json.dumps(users[self.uid].opts[1:-1].split(","))
 
         parsepoint = 0
         datalist = []
