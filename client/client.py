@@ -4,6 +4,7 @@ import json
 import time
 import sys
 server = "ws://139.59.162.84:40111"
+filename = "uid.txt"
 
 if len(sys.argv) == 1:
     print ("MORE ARGS")
@@ -11,6 +12,7 @@ else:
     if len(sys.argv) == 3:
         if sys.argv[2] == "debug":
             server = "ws://localhost:40111"
+            filename = "debug_uid.txt"
     if sys.argv[1] == "register":
         ws = create_connection(server)
         print("hah")
@@ -31,12 +33,12 @@ else:
         ws.send("USR"+json.dumps(jr))
         uid = ws.recv()[3:]
         print (uid)
-        uidfile = open("uid.txt", "w+")
+        uidfile = open(filename, "w+")
         uidfile.write(str(uid))
     elif sys.argv[1] == "schedule":
         ws = create_connection(server)
         try:
-            uidfile = open("uid.txt", "rt")
+            uidfile = open(filename, "rt")
             uid = uidfile.readline().rstrip()
         except FileNotFoundError:
             print("hah")
@@ -57,7 +59,7 @@ else:
             ws.send("USR"+json.dumps(jr))
             uid = ws.recv()[3:]
             print (uid)
-            uidfile = open("uid.txt", "w+")
+            uidfile = open(filename, "w+")
             uidfile.write(str(uid))
         uid = int(uid)
         print("Sending message to UID " + str(uid))

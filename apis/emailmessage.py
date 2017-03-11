@@ -3,6 +3,7 @@ import smtplib
 # from email.mime.multipart import MIMEMultipart
 import email.mime.text
 import email.mime.multipart
+import re
 
 fromaddr = "BombScheduling@gmail.com"
 
@@ -32,7 +33,9 @@ def send(details, msg):
     server.sendmail(fromaddr, details.email_address, text)
 
 def verify(details):
-    return True
+    addr = details.email_address
+    p = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+    return p.search(addr)
 
 # server.quit()
 
