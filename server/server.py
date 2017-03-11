@@ -40,9 +40,10 @@ class bomb():
         datalist = users[self.uid].opts
         print("about to start integrating")
         for i in range(len(integrations)):
-            print(datalist[i])
-            print(self.msg)
-            integrations[i].function(datalist[i], self.msg)
+            if not "" in list(datalist[i].__dict__.values()):
+                print(datalist[i])
+                print(self.msg)
+                integrations[i].function(datalist[i], self.msg)
         bombs.remove(self)
 
 def turn_json_into_classes(jsonstring):
@@ -65,23 +66,6 @@ def turn_json_into_classes(jsonstring):
         datalist.append(fromJSON(j, integration.data))
     return datalist
 
-try:
-    userfile = open("users.encrypted", "rb")
-    users = pickle.load(userfile)
-    userfile.close()
-except Exception:
-    print("Regenerating users")
-    users = {}
-try:
-    bombfile = open("bombs.encrypted", "rb")
-    bombs = pickle.load(bombfile)
-    bombfile.close()
-except Exception:
-    print("Regenerating bombs")
-    bombs = []
-
-print (users)
-print (bombs)
 
 
 def toJSON(obj):
@@ -124,6 +108,24 @@ for loader, module_name, is_pkg in pkgutil.iter_modules([path]):
         integrations.append(integration(data, function, verify)) 
 
 print("FINISHED LOADING MODULES")
+
+try:
+    userfile = open("users.encrypted", "rb")
+    users = pickle.load(userfile)
+    userfile.close()
+except (FileNotFoundError, EOFError):
+    print("Regenerating users")
+    users = {}
+try:
+    bombfile = open("bombs.encrypted", "rb")
+    bombs = pickle.load(bombfile)
+    bombfile.close()
+except (FileNotFoundError, EOFError):
+    print("Regenerating bombs")
+    bombs = []
+
+print (users)
+print (bombs)
 
 integrations = sorted(integrations, key=lambda x:x.data.__name__)
 
