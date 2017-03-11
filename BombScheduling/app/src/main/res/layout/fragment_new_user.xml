@@ -58,7 +58,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:gravity="center"
-        android:text="How about getting every single communication meathod under the sun to remind you?"
+        android:text="How about getting every single communication method under the sun to remind you?"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         android:layout_below="@+id/newUser_subheading3"
         android:layout_centerHorizontal="true" />
