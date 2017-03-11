@@ -41,7 +41,7 @@ class bomb():
         print(userstosessions)
         try:
             userstosessions[self.uid].sendMessage("ALR" + self.msg.message_body)
-        except keyerror:
+        except KeyError:
             print("Can't find user online")
 
         print("about to start integrating")
