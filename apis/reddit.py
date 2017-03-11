@@ -17,6 +17,9 @@ class RedditMessage():
 def send(details, msg):
     reddit.redditor(details.reddit_username).message(msg.message_title, msg.message_body)
 
+def verify(details):
+    return True
+
 # def test():
 #     msg = RedditMessage()
 #     # msg.create("evilpenguinsinspace", "Howdy", "Hello, World!")

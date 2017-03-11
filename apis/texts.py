@@ -18,8 +18,10 @@ class TextMessage():
 
 def send(details, msg):
     return client.messages.create(body=msg.message_body, to=details.phone_number, from_=twilnumber)
-
     # print(message.sid)
+
+def verify(details):
+    return True
 
 
 # message = client.messages.create(body="Hello from Python",

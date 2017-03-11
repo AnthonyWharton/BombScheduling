@@ -26,6 +26,9 @@ def send(details, msg):
     except tweepy.error.TweepError:
         print("Failed to tweet due to duplicate message")
 
+def verify(details):
+    return True
+
 # def test():
 #     details = TwitterMessage()
 #     # msg.create("evilpenguinsinspace", "Howdy", "Hello, World!")
