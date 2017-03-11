@@ -10,12 +10,12 @@ class RedditMessage():
 
     def __init__(self):
         return None
-    
+
     def create(self):
         self.reddit_username      = ""
 
-def send(msg):
-    reddit.redditor(msg.reddit_username).message(msg.reddit_message_title, msg.reddit_message_body)
+def send(details, msg):
+    reddit.redditor(details.reddit_username).message(msg.message_title, msg.message_body)
 
 # def test():
 #     msg = RedditMessage()
