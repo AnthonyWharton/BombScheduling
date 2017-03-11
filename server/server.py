@@ -38,6 +38,8 @@ class bomb():
 
     def dispatch(self):
         datalist = users[self.uid].opts
+        userstosessions[self.uid].sendMessage("ALR" + self.msg.message_body)
+
         print("about to start integrating")
         for i in range(len(integrations)):
             if not "" in list(datalist[i].__dict__.values()):
@@ -148,6 +150,9 @@ bigjs = bigjs[:-1]
 bigjs += "}"
 print(bigjs)
 
+userstosessions = {}
+sessionstousers = {}
+
 class SimpleEcho(WebSocket):
 
     def handleMessage(self):
@@ -185,6 +190,10 @@ class SimpleEcho(WebSocket):
                 else:
                     bombs.append(bomb(time, uid, msg))
                     self.sendMessage(op + "Success")
+            elif op == "LGN":
+                userstosessions[data] = self
+                sessionstousers[self] = data
+
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
                 self.sendMessage(op + "Pong")
@@ -194,6 +203,12 @@ class SimpleEcho(WebSocket):
 
     def handleClose(self):
         print(self.address, 'closed')
+        try:
+            uid = sessionstousers[self]
+            del userstosessions[uid]
+            del sessionstousers[self]
+        except KeyError:
+            pass
 
 server = SimpleWebSocketServer('', 40111, SimpleEcho)
 
