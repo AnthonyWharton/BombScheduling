@@ -72,6 +72,7 @@ class bomb():
             print(datalist[i])
             print(msg)
             integrations[i].function(datalist[i], msg)
+        bombs.remove(self)
 
 def toJSON(obj):
     return json.dumps(obj.__dict__)
