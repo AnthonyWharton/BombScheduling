@@ -1,9 +1,11 @@
 package bombscheduling.com.bombscheduling.Fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ public class NewUser extends Fragment {
 
     private NewUserToActivityListener listener;
     private Button submit;
+    private int uid;
 
     private void captureAndInitialise() {
         submit = (Button) getView().findViewById(R.id.newUser_submit);
@@ -28,7 +31,6 @@ public class NewUser extends Fragment {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
                 Register newFragment = new Register();
@@ -78,6 +80,19 @@ public class NewUser extends Fragment {
             listener = (NewUserToActivityListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement THINGY");
+        }
+
+        // Try Load
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        uid = sharedPref.getInt(ActivityMain.STORE_USER_ID, -1);
+
+        // If there was a thing to load, skip setup and login
+        Log.d("NewUser", String.valueOf(uid));
+        if (uid != -1) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            BombSchedule newFragment = new BombSchedule();
+            transaction.replace(R.id.fragment_container, newFragment, ActivityMain.FRAGMENT_BOMB_SCHEDULE);
+            transaction.commit();
         }
     }
 

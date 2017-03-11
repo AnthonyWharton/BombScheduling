@@ -19,16 +19,19 @@ import static bombscheduling.com.bombscheduling.Networking.MessageHelper.CONNECT
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECIEVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_ERROR;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_ID;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_MODES;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_MODES;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.REGISTERED_USER;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.SET_BOMB;
 
 public class Networking {
 
     public static final String PING          = "PNG";
+    public static final String LOGIN         = "LGN";
     public static final String REQUEST_MODES = "REQ";
     public static final String REGISTER_USER = "USR";
     public static final String BOMB          = "BMB";
+    public static final String BOMB_ALARM    = "ALR";
 
     private Context         context;
     private Messenger       sendTo;
@@ -49,6 +52,7 @@ public class Networking {
             Log.d("Networking", "Message Sent, OP: " + opCode + ", DATA: " + data);
             client.send(opCode + data);
         } else {
+            Log.d("Networking", "Message NOT SENT, OP: " + opCode + ", DATA: " + data);
             MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(NETWORK_ERROR).build());
         }
     }
@@ -97,7 +101,7 @@ public class Networking {
                         Bundle b = new Bundle();
                         b.putStringArrayList(K_RECIEVED_MODES, keysList);
                         MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
-                                                                           .setWhat(RECIEVED_MODES)
+                                                                           .setWhat(RECEIVED_MODES)
                                                                            .setBundle(b)
                                                                            .build());
                     } catch (JSONException e) {
@@ -105,21 +109,43 @@ public class Networking {
                     }
                 } else if (opcode.equals(REGISTER_USER)) {
                     // Assigned User ID
-                    try {
-                        JSONObject reader = new JSONObject(data);
-                        int uid = (int) reader.get("user_id");
-                        Bundle b = new Bundle();
-                        if (uid < 0) b.putString(K_USER_ERROR, reader.getString("error"));
-                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
-                                .setWhat(RECIEVED_MODES)
-                                .setArg1(uid)
-                                .setBundle(b)
-                                .build());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    Boolean error = false;
+                    Bundle b = new Bundle();
+                    if (data.substring(0,1).equals("I")) {
+                        b.putString(K_USER_ERROR, data);
+                        error = true;
                     }
+                    if (error) {
+                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
+                                     .setWhat(REGISTERED_USER)
+                                     .setArg1(-1)
+                                     .setBundle(b)
+                                     .build());
+                    } else {
+                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
+                                     .setWhat(REGISTERED_USER)
+                                     .setArg1(new Integer(data))
+                                     .build());
+                    }
+
                 } else if (opcode.equals(BOMB)) {
                     // Success/Failure
+                    if (data.substring(0,1).equals("S")) {
+                        //success
+                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
+                                .setWhat(SET_BOMB)
+                                .setArg1(0)
+                                .build());
+                    } else {
+                        //failure
+                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
+                                .setWhat(SET_BOMB)
+                                .setArg1(1)
+                                .build());
+                    }
+                } else if (opcode.equals(BOMB_ALARM)) {
+                    // Something related to me went BANG
+                    Log.d("Networking", "OHSHITWADDAP");
                 }
             }
 
