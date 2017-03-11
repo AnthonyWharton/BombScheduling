@@ -203,17 +203,22 @@ class SimpleEcho(WebSocket):
                 body = data["message"]
                 time = data["time"]
                 uid = data["uid"]
-                msg = message(body, title)
-                if uid not in list(users.keys()):
-                    print("Scheduling Failure")
+                if body == "" or title == "":
+                    print("No message or title")
+                    print("scheduling failure")
                     self.sendMessage(op + "Failure")
                 else:
-                    print("Got here")
-                    print(bomb(int(time), int(uid), msg, int(bid)))
-                    print("But not here")
-                    new_bombs.append((bid, bomb(time, uid, msg, bid)))
-                    print("Scheduling Success")
-                    self.sendMessage(op + "Success")
+                    msg = message(body, title)
+                    if uid not in list(users.keys()):
+                        print("Scheduling Failure")
+                        self.sendMessage(op + "Failure")
+                    else:
+                        print("Got here")
+                        print(bomb(int(time), int(uid), msg, int(bid)))
+                        print("But not here")
+                        new_bombs.append((bid, bomb(time, uid, msg, bid)))
+                        print("Scheduling Success")
+                        self.sendMessage(op + "Success")
             elif op == "LGN":
                 print("LGN request recieved from " + str(self.address[0]))
                 print("Logged in user " + str(data))
