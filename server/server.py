@@ -129,7 +129,7 @@ integrations = sorted(integrations, key=lambda x:x.data.__name__)
 
 print (integrations)
 
-bigjs = {}
+bigjs = "{"
 
 for integration in integrations:
     x = integration.data()
@@ -137,11 +137,12 @@ for integration in integrations:
     jx = toJSON(x)
     print(jx)
     print(jx.count(',') + 1)
-    js = json.loads(jx)
-    bigjs = {**bigjs, **js}
+    bigjs += jx[1:-1]
+    bigjs += ","
     integration.setJsonSize(jx.count(',') + 1)
 
-bigjs = json.dumps(bigjs)
+bigjs = bigjs[:-1]
+bigjs += "}"
 print(bigjs)
 
 class SimpleEcho(WebSocket):
