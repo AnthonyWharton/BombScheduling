@@ -17,14 +17,8 @@ from random import randint
 
 class message():
     def __init__(self, message, title):
-        if title != "":
-            self.message_title = title
-        else:
-            self.message_title = "Default Title"
-        if message != "":
-            self.message_body = message
-        else:
-            self.message_body = "Default Body"
+        self.message_title = title
+        self.message_body = message
 
 class user():
     def __init__(self, id, opts):
@@ -47,15 +41,21 @@ class bomb():
         datalist = users[self.uid].opts
         print(userstosessions)
         try:
-            userstosessions[self.uid].sendMessage("ALR" + self.msg.message_body)
+            for session in userstosessions[self.uid]:
+                session.sendMessage("ALR" + self.msg.message_body)
+                print("notifying " + session.address[0])
         except KeyError:
-            print("Can't find user online")
+            print("Can't find any users online")
 
         print("about to start integrating")
         for i in range(len(integrations)):
             if not "" in list(datalist[i].__dict__.values()):
                 print(datalist[i])
                 print(self.msg)
+                if self.msg.message_body == "":
+                    self.msg.message_body = "Default Message body"
+                if self.msg.message_title == "":
+                    self.msg.message_title = "Default Message Title"
                 integrations[i].function(datalist[i], self.msg)
         done_bombs.append(self.bid)
 
@@ -203,28 +203,35 @@ class SimpleEcho(WebSocket):
                 time = data["time"]
                 uid = data["uid"]
                 msg = message(body, title)
-                print("Got here")
                 if uid not in list(users.keys()):
                     print("Scheduling Failure")
                     self.sendMessage(op + "Failure")
                 else:
+                    print("Got here")
+                    print(bomb(int(time), int(uid), msg, int(bid)))
+                    print("But not here")
                     bombs[bid] = bomb(time, uid, msg, bid)
                     print("Scheduling Success")
                     self.sendMessage(op + "Success")
             elif op == "LGN":
                 print("LGN request recieved from " + str(self.address[0]))
                 print("Logged in user " + str(data))
-                userstosessions[int(data)] = self
+                try:
+                    userstosessions[int(data)].append(self)
+                    print(userstosessions[int(data)])
+                except KeyError:
+                    userstosessions[int(data)] = [self]
                 sessionstousers[self] = int(data)
             elif op == "LST":
                 print("LST request recieved from " + str(self.address[0]))
                 user_bombs = [x for x in bombs.values() if x.uid == data]
                 message_json = {}
-                for bomb in user_bombs:
+                for b in user_bombs:
                     bomb_data = {}
-                    bomb_data["title"] = bomb.msg.message_title
-                    bomb_data["body"] = bomb.msg.message_body
-                    message_json[bid] = bomb_data
+                    bomb_data["title"] = b.msg.message_title
+                    bomb_data["body"] = b.msg.message_body
+                    bomb_data["time"] = b.time
+                    message_json[bid] = b_data
                 print(message_json)
                 self.sendMessage(op + json.dumps(message_json))
             elif op == "DEL":
@@ -245,7 +252,9 @@ class SimpleEcho(WebSocket):
         print(self.address, 'closed')
         try:
             uid = sessionstousers[self]
-            del userstosessions[uid]
+            userstosessions[uid].remove(self)
+            if len(userstosessions[uid]) == 0:
+                del userstosessions[uid]
             del sessionstousers[self]
             print("Logged out user " + str(uid))
         except KeyError:
