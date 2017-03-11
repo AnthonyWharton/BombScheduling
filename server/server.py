@@ -242,8 +242,7 @@ def doClock():
             bomb.check() 
         for bomb in done_bombs:
             del bombs[bomb]
-        done_bombs = []
-
+        done_bombs.clear()
 server_thread = threading.Thread(target=doServer)
 server_thread.daemon = True
 server_thread.start()
