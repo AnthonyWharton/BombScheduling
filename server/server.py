@@ -111,7 +111,6 @@ for loader, module_name, is_pkg in pkgutil.iter_modules([path]):
         print ("MODULE", modules)
         print (inspect.getmembers(modules, predicate=inspect.isclass))
         print (inspect.getmembers(modules, predicate=inspect.isfunction))
-        datas = [ func for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1]
         for d in datas:
             if "message" in d[0].lower():
                 data = d[1]
@@ -144,8 +143,6 @@ for integration in integrations:
     integration.setJsonSize(jx.count(',') + 1)
 
 bigjs = json.dumps(bigjs)
-print(bigjs)
-print(turn_json_into_classes(bigjs))
 
 class SimpleEcho(WebSocket):
 

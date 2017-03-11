@@ -9,30 +9,26 @@ if len(sys.argv) == 1:
 else:
     if sys.argv[1] == "register":
         ws = create_connection("ws://139.59.162.84:40111")
-        try:
-            uidfile = open("uid.txt", "rt")
-            uid = uidfile.readline().rstrip()
-        except FileNotFoundError:
-            print("hah")
-            print ("REQ")
-            ws.send("REQ")
-            print ("Sent")
-            print ("Reeiving...")
-            result =  ws.recv()[3:]
-            jr = json.loads(result) 
-            print (jr)
-            for key in list(jr.keys()):
-                prettyKey = key.replace("_", " ")
-                prettyKey = prettyKey.title()
-                print(prettyKey + ": ")
-                jr[key] = input()
-                
-            print (jr)
-            ws.send("USR"+json.dumps(jr))
-            uid = ws.recv()[3:]
-            print (uid)
-            uidfile = open("uid.txt", "w+")
-            uidfile.write(str(uid))
+        print("hah")
+        print ("REQ")
+        ws.send("REQ")
+        print ("Sent")
+        print ("Reeiving...")
+        result =  ws.recv()[3:]
+        jr = json.loads(result) 
+        print (jr)
+        for key in list(jr.keys()):
+            prettyKey = key.replace("_", " ")
+            prettyKey = prettyKey.title()
+            print(prettyKey + ": ")
+            jr[key] = input()
+            
+        print (jr)
+        ws.send("USR"+json.dumps(jr))
+        uid = ws.recv()[3:]
+        print (uid)
+        uidfile = open("uid.txt", "w+")
+        uidfile.write(str(uid))
     elif sys.argv[1] == "schedule":
         ws = create_connection("ws://139.59.162.84:40111")
         try:
