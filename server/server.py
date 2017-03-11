@@ -189,6 +189,7 @@ def doServer():
 def doClock():
     print("clocking")
     while(True):
+        time.sleep(5)
         for bomb in bombs:
             bomb.check() 
 
