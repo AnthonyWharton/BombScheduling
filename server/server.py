@@ -205,7 +205,7 @@ server_thread.start()
 try:
     doClock()
 except KeyboardInterrupt:
-    printf("Saving users and bombs")
+    print("Saving users and bombs")
     userfile = open("users.encrypted", "wb")
     bombfile = open("bombs.encrypted", "wb")
 
