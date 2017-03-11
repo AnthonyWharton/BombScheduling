@@ -21,10 +21,12 @@ bombfile = open("bombs.encrypted", "rb")
 try:
     users = pickle.load(userfile)
 except EOFError:
+    print("Regenerating users")
     users = {}
 try:
     bombs = pickle.load(bombfile)
 except EOFError:
+    print("Regenerating bombs")
     bombs = []
 
 print (users)
@@ -203,6 +205,7 @@ server_thread.start()
 try:
     doClock()
 except KeyboardInterrupt:
+    printf("Saving users and bombs")
     userfile = open("users.encrypted", "wb")
     bombfile = open("bombs.encrypted", "wb")
 
