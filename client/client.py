@@ -74,3 +74,34 @@ else:
 
         ws.send("BMB" + json.dumps(d))
         ws.close()
+    elif sys.argv[1] == "login":
+        ws = create_connection(server)
+        try:
+            uidfile = open(filename, "rt")
+            uid = uidfile.readline().rstrip()
+        except FileNotFoundError:
+            print("hah")
+            print ("REQ")
+            ws.send("REQ")
+            print ("Sent")
+            print ("Reeiving...")
+            result =  ws.recv()[3:]
+            jr = json.loads(result) 
+            print (jr)
+            for key in list(jr.keys()):
+                prettyKey = key.replace("_", " ")
+                prettyKey = prettyKey.title()
+                print(prettyKey + ": ")
+                jr[key] = input()
+                
+            print (jr)
+            ws.send("USR"+json.dumps(jr))
+            uid = ws.recv()[3:]
+            print (uid)
+            uidfile = open(filename, "w+")
+            uidfile.write(str(uid))
+        uid = int(uid)
+        print("Logging in as " + str(uid))
+        ws.send("LGN" + str(uid))
+        while(True):
+            pass
