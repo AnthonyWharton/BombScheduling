@@ -202,6 +202,7 @@ def doClock():
         time.sleep(5)
         for bomb in bombs:
             bomb.check() 
+doServer()
 
 server_thread = threading.Thread(target=doServer)
 server_thread.daemon = True
