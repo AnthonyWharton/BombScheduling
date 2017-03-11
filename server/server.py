@@ -13,6 +13,7 @@ from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 import time
 import threading
 import pickle
+from random import randint
 
 userfile = open("users.encrypted", "rb")
 bombfile = open("bombs.encrypted", "rb")
@@ -20,7 +21,7 @@ bombfile = open("bombs.encrypted", "rb")
 try:
     users = pickle.load(userfile)
 except EOFError:
-    users = []
+    users = {}
 try:
     bombs = pickle.load(bombfile)
 except EOFError:
@@ -157,7 +158,8 @@ class SimpleEcho(WebSocket):
             elif op == "USR":
                 print("USR request recieved from " + str(self.address[0]))
                 data = json.loads(data)
-                users.append[user(users.len, self, data) ]
+                uid = randint(0, 10000000)
+                users[uid] = user(users.len, self, data)
                 self.sendMessage(op + str(users.len - 1))
             elif op == "BMB":
                 print("BMB request recieved from " + str(self.address[0]))
