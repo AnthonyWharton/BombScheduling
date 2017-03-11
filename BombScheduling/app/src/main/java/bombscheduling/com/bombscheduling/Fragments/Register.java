@@ -54,6 +54,9 @@ public class Register extends Fragment {
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO REMOVE:
+//                successfulRegister();
+
                 if (listener.isConnected()) {
                     JSONObject json = new JSONObject();
                     for (int i = 0; i < adapter.getCount(); i++) {

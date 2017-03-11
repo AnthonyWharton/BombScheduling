@@ -38,16 +38,6 @@
         android:layout_alignStart="@+id/bs_title"
         android:layout_marginTop="12dp" />
 
-    <EditText
-        android:id="@+id/bs_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:inputType="time"
-        android:layout_below="@+id/bs_description"
-        android:layout_centerHorizontal="true" />
-
     <Button
         android:id="@+id/bs_submit"
         android:layout_width="wrap_content"
