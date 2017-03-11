@@ -37,9 +37,7 @@ class bomb():
             self.dispatch()
 
     def dispatch(self):
-        print(users[self.uid].opts)
         keys = users[self.uid].opts[1:-1].split(",")
-        print(keys)
 
         parsepoint = 0
         datalist = []
@@ -65,6 +63,25 @@ class bomb():
             integrations[i].function(datalist[i], self.msg)
         bombs.remove(self)
 
+def turn_json_into_classes(jsonstring):
+    keys = jsonstring[1:-1].split(",")
+
+    parsepoint = 0
+    datalist = []
+
+    for integration in integrations:
+        i = integration.jsonSize
+        l = keys[parsepoint:parsepoint + i]
+        parsepoint += i
+        j = "{"
+        for elem in l:
+            j += elem.lstrip()
+            j += ","
+        j = j[:-1]
+        j += "}"
+        print(j)
+        datalist.append(fromJSON(j, integration.data))
+    return datalist
 
 try:
     userfile = open("users.encrypted", "rb")
@@ -94,9 +111,10 @@ def fromJSON(obj, cl):
     return p
 
 class integration:
-    def __init__(self, k, f):
+    def __init__(self, k, f, v):
         self.data = k
         self.function = f
+        self.verify = v
     def __repr__(self):
         return "data: " + str(self.data) + "\n" + "function: " + str(self.function)
     def setJsonSize(self, i):
@@ -121,7 +139,9 @@ for loader, module_name, is_pkg in pkgutil.iter_modules([path]):
         for f in functions:
             if "send" in f[0].lower():
                 function = f[1]
-        integrations.append(integration(data, function)) 
+            if "verify" in f[0].lower():
+                verify = f[1]
+        integrations.append(integration(data, function, verify)) 
 
 print("FINISHED LOADING MODULES")
 
@@ -157,6 +177,10 @@ class SimpleEcho(WebSocket):
             elif op == "USR":
                 print("USR request recieved from " + str(self.address[0]))
                 data = json.loads(data)
+                classes = turn_json_into_classes(data)
+                valid = True
+                for i in range(len(integrations)):
+                    valid = valid and integrations[i].verify(classes[i])
                 uid = randint(0, 10000000)
                 users[uid] = user(uid, json.dumps(data))
                 self.sendMessage(op + str(uid))
