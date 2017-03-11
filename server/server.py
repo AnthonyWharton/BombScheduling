@@ -17,8 +17,14 @@ from random import randint
 
 class message():
     def __init__(self, message, title):
-        self.message_title = title
-        self.message_body = message
+        if title != "":
+            self.message_title = title
+        else:
+            self.message_title = "Default Title"
+        if message != "":
+            self.message_body = message
+        else:
+            self.message_body = "Default Body"
 
 class user():
     def __init__(self, id, opts):
@@ -243,6 +249,7 @@ def doClock():
         for bomb in done_bombs:
             del bombs[bomb]
         done_bombs.clear()
+
 server_thread = threading.Thread(target=doServer)
 server_thread.daemon = True
 server_thread.start()
