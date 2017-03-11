@@ -171,7 +171,7 @@ class SimpleEcho(WebSocket):
                 message = data["message"]
                 time = data["time"]
                 uid = data["uid"]
-                bombs.append(bomb(time, users[uid]))
+                bombs.append(bomb(time, uid))
                 self.sendMessage(op + "Success")
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
