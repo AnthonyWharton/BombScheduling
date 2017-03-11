@@ -39,7 +39,10 @@ class bomb():
     def dispatch(self):
         datalist = users[self.uid].opts
         print(userstosessions)
-        userstosessions[self.uid].sendMessage("ALR" + self.msg.message_body)
+        try:
+            userstosessions[self.uid].sendMessage("ALR" + self.msg.message_body)
+        except keyerror:
+            print("Can't find user online")
 
         print("about to start integrating")
         for i in range(len(integrations)):
