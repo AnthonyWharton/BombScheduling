@@ -43,9 +43,8 @@ class message():
         self.message_body = ""
 
 class user():
-    def __init__(self, id, client, opts):
+    def __init__(self, id, opts):
         self.id = id
-        self.client = client
         self.opts = opts
 
 class bomb():
@@ -164,7 +163,7 @@ class SimpleEcho(WebSocket):
                 print("USR request recieved from " + str(self.address[0]))
                 data = json.loads(data)
                 uid = randint(0, 10000000)
-                users[uid] = user(uid, self, data)
+                users[uid] = user(uid, data)
                 self.sendMessage(op + str(uid))
             elif op == "BMB":
                 print("BMB request recieved from " + str(self.address[0]))
