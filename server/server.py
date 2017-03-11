@@ -53,6 +53,7 @@ for loader, module_name, is_pkg in pkgutil.iter_modules([path]):
         modules = loader.find_module(module_name).load_module(module_name)
         print ("MODULE", modules)
         print (inspect.getmembers(modules, predicate=inspect.isclass))
+        print (inspect.getmembers(modules, predicate=inspect.isfunction))
         data = [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1][0]
         function = [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isfunction) if func[0].startswith('_') is False ][::-1][0]
         integrations.append(integration(data, function)) 
@@ -61,8 +62,10 @@ print("FINISHED LOADING MODULES")
 
 print (integrations)
 
-for (data, _) in integrations:
-    print (toJSON(data))
+for integration in integrations:
+    x = integration.data()
+    x.create()
+    print (toJSON(x))
 
 
 
