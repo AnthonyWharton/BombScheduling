@@ -1,6 +1,8 @@
 import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+# from email.mime.text import MIMEText
+# from email.mime.multipart import MIMEMultipart
+import email.mime.text
+import email.mime.multipart
 
 fromaddr = "BombScheduling@gmail.com"
 
@@ -18,16 +20,14 @@ class EmailMessage():
 
     def create(self):
         self.email_address       = ""
-        self.email_message_title = ""
-        self.email_message_body  = ""
 
-def send(msg):
-    message = MIMEMultipart()
+def send(details, msg):
+    message = email.mime.multipart.MIMEMultipart()
     message['From'] = fromaddr
     message['To'] = msg.email_address
     message['Subject'] = msg.email_message_title
     body = msg.email_message_body
-    message.attach(MIMEText(body, 'plain'))
+    message.attach(email.mime.text.MIMEText(body, 'plain'))
     text = message.as_string()
     server.sendmail(fromaddr, msg.email_address, text)
 
