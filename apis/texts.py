@@ -23,6 +23,8 @@ def send(details, msg):
 
 def verify(details):
     num = details.phone_number
+    if num == "":
+        return True
     p = re.compile(r'^(?:\+?44)?[07]\d{9,13}$')
     return p.search(num)
 

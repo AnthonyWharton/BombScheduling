@@ -20,6 +20,8 @@ def send(details, msg):
 
 def verify(details):
     name = details.reddit_username
+    if name == "":
+        return True
     p = re.compile(r'^[A-Za-z_0-9\-]{3,20}$')
     return p.search(name)
 
