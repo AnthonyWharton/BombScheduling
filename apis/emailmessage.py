@@ -34,6 +34,8 @@ def send(details, msg):
 
 def verify(details):
     addr = details.email_address
+    if addr == "":
+        return True
     p = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
     return p.search(addr)
 

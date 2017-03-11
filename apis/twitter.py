@@ -29,6 +29,8 @@ def send(details, msg):
 
 def verify(details):
     name = details.twitter_username
+    if name == "":
+        return True
     p = re.compile(r'([A-Za-z0-9_]+)')
     return p.search(name)
 
