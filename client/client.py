@@ -63,6 +63,7 @@ else:
         print("Sending message to UID " + str(uid))
             
         now = time.time()
+        now += 60
 
         d = {}
         d["title"] = "Hey Sean"
