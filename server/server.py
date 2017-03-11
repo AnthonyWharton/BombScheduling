@@ -141,11 +141,6 @@ for integration in integrations:
     bigjs = {**bigjs, **js}
     integration.setJsonSize(jx.count(',') + 1)
 
-msg = message()
-msg.create()
-js = json.loads(toJSON(msg))
-
-bigjs = {**bigjs, **js}
 bigjs = json.dumps(bigjs)
 print(bigjs)
 
@@ -158,21 +153,24 @@ class SimpleEcho(WebSocket):
             data = self.data[3:]
             if op == "REQ": 
                 print("REQ request recieved from " + str(self.address[0]))
-                self.sendMessage(bigjs)
+                self.sendMessage(op + bigjs)
             elif op == "USR":
                 print("USR request recieved from " + str(self.address[0]))
                 data = json.loads(data)
                 users.append[user(users.len, self, data) ]
-                self.sendMessage(str(users.len - 1))
+                self.sendMessage(op + str(users.len - 1))
             elif op == "BMB":
                 print("BMB request recieved from " + str(self.address[0]))
                 data = json.loads(data)
+                title = data["title"]
+                message = data["message"]
                 time = data["time"]
                 id = data["id"]
                 bombs.append(bomb(time, users[id]))
+                self.sendMessage(op + "Success")
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
-                self.sendMessage("Pong")
+                self.sendMessage(op + "Pong")
 
     def handleConnected(self):
         print(self.address, 'connected')
