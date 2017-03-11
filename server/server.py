@@ -140,7 +140,9 @@ class SimpleEcho(WebSocket):
         if self.opcode == 1:
             print(self.data)
             op = self.data[:3]
+            print ("op: " + op)
             data = self.data[3:]
+            print ("data: " + data)
             if op == "REQ": 
                 self.sendMessage(datalist)
             if op == "USR":
