@@ -26,10 +26,11 @@ class user():
         self.opts = opts
 
 class bomb():
-    def __init__(self, time, uid, msg):
+    def __init__(self, time, uid, msg, bid):
         self.time = time
         self.uid = uid
         self.msg = msg
+        self.bid  = bid
      
     def check(self):
         if time.time() > self.time:
@@ -129,7 +130,7 @@ try:
     bombfile.close()
 except (FileNotFoundError, EOFError):
     print("Regenerating bombs")
-    bombs = []
+    bombs = {}
 
 print (users)
 print (bombs)
@@ -178,12 +179,17 @@ class SimpleEcho(WebSocket):
                         self.sendMessage(op + "Invalid " + integrations[i].name)
                         return 
                 uid = randint(0, 10000000)
+                while(uid in list(users.keys)):
+                    uid = randint(0, 10000000)
                 users[uid] = user(uid, classes)
                 self.sendMessage(op + str(uid))
             elif op == "BMB":
                 print("BMB request recieved from " + str(self.address[0]))
                 data = json.loads(data)
                 print(data)
+                bid = randint(0, 10000000)
+                while(bid in list(bombs.keys)):
+                    bid = randint(0, 10000000)
                 title = data["title"]
                 body = data["message"]
                 time = data["time"]
@@ -227,7 +233,7 @@ def doClock():
     print("clocking")
     while(True):
         time.sleep(5)
-        for bomb in bombs:
+        for bomb in bombs.items():
             bomb.check() 
 
 server_thread = threading.Thread(target=doServer)
