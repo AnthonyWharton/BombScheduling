@@ -14,12 +14,11 @@ import time
 import threading
 import pickle
 from random import randint
+
 class message():
-    def __init__(self):
-        pass
-    def create(self):
-        self.message_title = ""
-        self.message_body = ""
+    def __init__(self, message, title):
+        self.message_title = title
+        self.message_body = message
 
 class user():
     def __init__(self, id, opts):
@@ -27,9 +26,10 @@ class user():
         self.opts = opts
 
 class bomb():
-    def __init__(self, time, uid):
+    def __init__(self, time, uid, msg):
         self.time = time
         self.uid = uid
+        self.msg = msg
      
     def check(self):
         if time.time() > self.time:
@@ -56,21 +56,11 @@ class bomb():
             print(j)
             datalist.append(fromJSON(j, integration.data))
 
-        l = keys[parsepoint:parsepoint + 2]
-        parsepoint += 2
-        j = "{"
-        for elem in l:
-            j += elem.lstrip()
-            j += ","
-        j = j[:-1]
-        j += "}"
-        print(j)
-        msg = fromJSON(j, message)
 
         for i in range(len(integrations)):
             print(datalist[i])
-            print(msg)
-            integrations[i].function(datalist[i], msg)
+            print(self.msg)
+            integrations[i].function(datalist[i], self.msg)
         bombs.remove(self)
 
 
@@ -176,10 +166,11 @@ class SimpleEcho(WebSocket):
                 message = data["message"]
                 time = data["time"]
                 uid = data["uid"]
+                msg = message(message, title)
                 if uid not in list(users.keys()):
                     self.sendMessage(op + "Failure")
                 else:
-                    bombs.append(bomb(time, uid))
+                    bombs.append(bomb(time, uid, msg))
                     self.sendMessage(op + "Success")
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
