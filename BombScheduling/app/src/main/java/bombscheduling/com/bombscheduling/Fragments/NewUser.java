@@ -17,6 +17,11 @@ import bombscheduling.com.bombscheduling.R;
 
 public class NewUser extends Fragment {
 
+    public interface NewUserToActivityListener {
+        void sendMessage();
+    }
+
+    private NewUserToActivityListener listener;
     private Button yesButton;
     private Button noButton;
 
@@ -33,6 +38,7 @@ public class NewUser extends Fragment {
                 transaction.replace(R.id.fragment_container, newFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
+                listener.sendMessage();
             }
         });
 
@@ -46,6 +52,7 @@ public class NewUser extends Fragment {
                 transaction.addToBackStack(null);
                 transaction.setTransition(android.R.style.Animation_Translucent);
                 transaction.commit();
+                listener.sendMessage();
             }
         });
     }
@@ -85,7 +92,7 @@ public class NewUser extends Fragment {
 
         // Connect to interface implemented within host Activity
         try {
-            // TODO: Catch interface implementation if need be
+            listener = (NewUserToActivityListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement THINGY");
         }

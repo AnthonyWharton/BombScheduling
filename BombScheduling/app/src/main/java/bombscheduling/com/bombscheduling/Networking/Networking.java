@@ -29,15 +29,15 @@ public class Networking {
     public Networking(Context context, Messenger replyTo) {
         this.context = context;
         this.sendTo  = replyTo;
-        initialiseClient();
     }
 
     public void connect() {
+        initialiseClient();
         client.connect();
     }
 
     public void sendMessage() {
-        client.send("yo wassap");
+        client.send("you have no friends and you suck lol");
     }
 
     public void close() {
@@ -78,7 +78,7 @@ public class Networking {
     private void initialiseClient() {
         URI uri;
         try {
-            uri = new URI("ws://139.59.162.84:8080");
+            uri = new URI("ws://139.59.162.84:40111");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -88,21 +88,25 @@ public class Networking {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.d("Networking", "WebSocket Opened");
+                MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(CONNECTED).build());
             }
 
             @Override
             public void onMessage(String s) {
                 Log.d("Networking", "WebSocket Message Received");
+                MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(MESSAGE_RECEIVED).build());
             }
 
             @Override
             public void onClose(int i, String s, boolean b) {
                 Log.d("Networking", "WebSocket Closed " + s);
+                MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(DISCONNECTED).build());
             }
 
             @Override
             public void onError(Exception e) {
                 Log.d("Networking", "WebSocket Error " + e.getMessage());
+                MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(DISCONNECTED).build());
             }
         };
     }
