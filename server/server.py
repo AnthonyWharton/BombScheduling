@@ -9,6 +9,10 @@ from os import listdir, path
 from os.path import isfile, join
 import json
 from collections import namedtuple
+from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
+import time
+
+users = []
 
 class message():
     def __init__(self):
@@ -17,6 +21,55 @@ class message():
         self.message_title = ""
         self.message_body = ""
 
+class user():
+    def __init__(self, id, client, opts):
+        self.id = id
+        self.client = client
+        self.opts = opts
+
+class bomb():
+    def __init__(self, time, user):
+        self.time = time
+        self.user = user
+     
+    def check(self):
+        if time.time() > self.time:
+            self.dispatch()
+
+    def dispatch(self):
+        keys = json.dumps(self.user.opts[1:-1].split(","))
+
+        parsepoint = 0
+        datalist = []
+
+        for integration in integrations:
+            i = integration.jsonSize
+            l = keys[parsepoint:parsepoint + i]
+            parsepoint += i
+            j = "{"
+            for elem in l:
+                j += elem.lstrip()
+                j += ","
+            j = j[:-1]
+            j += "}"
+            print(j)
+            datalist.append(fromJSON(j, integration.data))
+
+        l = keys[parsepoint:parsepoint + 2]
+        parsepoint += 2
+        j = "{"
+        for elem in l:
+            j += elem.lstrip()
+            j += ","
+        j = j[:-1]
+        j += "}"
+        print(j)
+        msg = fromJSON(j, message)
+
+        for i in range(len(integrations)):
+            print(datalist[i])
+            print(msg)
+            integrations[i].function(datalist[i], msg)
 
 def toJSON(obj):
     return json.dumps(obj.__dict__)
@@ -44,9 +97,16 @@ for loader, module_name, is_pkg in pkgutil.iter_modules([path]):
         print ("MODULE", modules)
         print (inspect.getmembers(modules, predicate=inspect.isclass))
         print (inspect.getmembers(modules, predicate=inspect.isfunction))
-        data = [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1][0]
-        print([ func[1] for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1])
-        function = [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isfunction) if func[0].startswith('_') is False ][::-1][0]
+        datas = [ func for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1]
+        for d in datas:
+            if "message" in d[0].lower():
+                data = d[1]
+        print([ func for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1])
+        functions = [ func for func in inspect.getmembers(modules, predicate=inspect.isfunction) if func[0].startswith('_') is False ][::-1]
+        print([ func for func in inspect.getmembers(modules, predicate=inspect.isfunction) if func[0].startswith('_') is False ][::-1])
+        for f in functions:
+            if "send" in f[0].lower():
+                function = f[1]
         integrations.append(integration(data, function)) 
 
 print("FINISHED LOADING MODULES")
@@ -71,49 +131,33 @@ js = json.loads(toJSON(msg))
 
 bigjs = {**bigjs, **js}
 
-bigjs
+class SimpleEcho(WebSocket):
 
-bigjs["email_address"] = "sean.r.innes@gmail.com"
-bigjs["reddit_username"] = "***REMOVED***"
-bigjs["twitter_username"] = "***REMOVED***"
-bigjs["message_title"] = "Test message"
-bigjs["message_body"] = "plz ignore"
+    def handleMessage(self):
+        if self.opcode == 1:
+            op = self.data[:3]
+            data = self.data[3:]
+            if op == "REQ": 
+                self.sendMessage(datalist)
+            if op == "USR":
+                data = json.loads(data)
+                users.append[user(users.len, self, data) ]
+                self.sendMessage(str(users.len - 1))
+            if op == "BMB":
+                data = json.loads(data)
+                time = data["time"]
+                id = data["id"]
+                bombs.append(bomb(time, users[id]))
+                pass
+        # echo message back to client
+        self.sendMessage("")
 
-returnstring = json.dumps(bigjs)
-keys = returnstring[1:-1].split(",")
+    def handleConnected(self):
+        print(self.address, 'connected')
 
-parsepoint = 0
-datalist = []
+    def handleClose(self):
+        print(self.address, 'closed')
 
-for integration in integrations:
-    i = integration.jsonSize
-    l = keys[parsepoint:parsepoint + i]
-    parsepoint += i
-    j = "{"
-    for elem in l:
-        j += elem.lstrip()
-        j += ","
-    j = j[:-1]
-    j += "}"
-    print(j)
-    datalist.append(fromJSON(j, integration.data))
-
-l = keys[parsepoint:parsepoint + 2]
-parsepoint += 2
-j = "{"
-for elem in l:
-    j += elem.lstrip()
-    j += ","
-j = j[:-1]
-j += "}"
-print(j)
-msg = fromJSON(j, message)
-
-for i in range(len(integrations)):
-    integrations[i].function(datalist[i], msg)
-
-
-print (datalist)
-
-
+server = SimpleWebSocketServer('', 40111, SimpleEcho)
+server.serveforever()
 

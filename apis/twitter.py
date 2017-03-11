@@ -21,7 +21,10 @@ class TwitterMessage():
 
 def send(details, msg):
     tweet = "@" + details.twitter_username + " " + msg.message_body
-    status = api.update_status(status=tweet)
+    try:
+        status = api.update_status(status=tweet)
+    except tweepy.error.TweepError:
+        print("Failed to tweet due to duplicate message")
 
 # def test():
 #     details = TwitterMessage()
