@@ -164,7 +164,7 @@ class SimpleEcho(WebSocket):
                 print("USR request recieved from " + str(self.address[0]))
                 data = json.loads(data)
                 uid = randint(0, 10000000)
-                users[uid] = user(uid, data)
+                users[uid] = user(uid, json.dumps(data))
                 self.sendMessage(op + str(uid))
             elif op == "BMB":
                 print("BMB request recieved from " + str(self.address[0]))
@@ -173,7 +173,6 @@ class SimpleEcho(WebSocket):
                 message = data["message"]
                 time = data["time"]
                 uid = data["uid"]
-                print(list(users.keys()))
                 if uid not in list(users.keys()):
                     self.sendMessage(op + "Failure")
                 else:
