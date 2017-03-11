@@ -1,4 +1,5 @@
 from twilio.rest import TwilioRestClient
+import re
 
 account_sid = "ACa27af77533c4f5198ce9706e589ff4ff" # Your Account SID from www.twilio.com/console
 auth_token  = "5e6ec2c5fe46ac0f3b2535a416fd3034"  # Your Auth Token from www.twilio.com/console
@@ -21,7 +22,9 @@ def send(details, msg):
     # print(message.sid)
 
 def verify(details):
-    return True
+    num = details.phone_number
+    p = re.compile(r'^(?:\+?44)?[07]\d{9,13}$')
+    return p.search(num)
 
 
 # message = client.messages.create(body="Hello from Python",

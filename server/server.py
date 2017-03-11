@@ -77,10 +77,11 @@ def fromJSON(obj, cl):
     return p
 
 class integration:
-    def __init__(self, k, f, v):
+    def __init__(self, k, f, v, n):
         self.data = k
         self.function = f
         self.verify = v
+        self.name = n
     def __repr__(self):
         return "data: " + str(self.data) + "\n" + "function: " + str(self.function)
     def setJsonSize(self, i):
@@ -105,7 +106,7 @@ for loader, module_name, is_pkg in pkgutil.iter_modules([path]):
                 function = f[1]
             if "verify" in f[0].lower():
                 verify = f[1]
-        integrations.append(integration(data, function, verify)) 
+        integrations.append(integration(data, function, verify, module_name.replace("message", "")))
 
 print("FINISHED LOADING MODULES")
 
@@ -162,16 +163,14 @@ class SimpleEcho(WebSocket):
                 # data = json.loads(data)
                 classes = turn_json_into_classes(data)
                 print(classes)
-                valid = True
                 for i in range(len(integrations)):
-                    valid = valid and integrations[i].verify(classes[i])
-                print(valid)
-                if valid:
-                    uid = randint(0, 10000000)
-                    users[uid] = user(uid, classes)
-                    self.sendMessage(op + str(uid))
-                else:
-                    self.sendMessage(op + "Pas valide")
+                    if not integrations[i].verify(classes[i]):
+                        print("Invalid " + integrations[i].name)
+                        self.sendMessage(op + "Invalid " + integrations[i].name)
+                        return 
+                uid = randint(0, 10000000)
+                users[uid] = user(uid, classes)
+                self.sendMessage(op + str(uid))
             elif op == "BMB":
                 print("BMB request recieved from " + str(self.address[0]))
                 data = json.loads(data)

@@ -1,4 +1,5 @@
 import praw
+import re
 
 reddit = praw.Reddit(client_id='QNODIY8pI3SAHw',
                      client_secret='KgKRGwhIN1HUEpdRFSLtSPSIdu8',
@@ -18,7 +19,9 @@ def send(details, msg):
     reddit.redditor(details.reddit_username).message(msg.message_title, msg.message_body)
 
 def verify(details):
-    return True
+    name = details.reddit_username
+    p = re.compile(r'^[A-Za-z_0-9\-]{3,20}$')
+    return p.search(name)
 
 # def test():
 #     msg = RedditMessage()
