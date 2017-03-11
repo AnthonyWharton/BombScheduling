@@ -12,9 +12,22 @@ from collections import namedtuple
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 import time
 import threading
+import pickle
 
-users = []
-bombs = []
+userfile = open("users.encrypted", "rb")
+bombfile = open("bombs.encrypted", "rb")
+
+try:
+    users = pickle.load(userfile)
+except EOFError:
+    users = []
+try:
+    bombs = pickle.load(bombfile)
+except EOFError:
+    bombs = []
+
+userfile.close()
+bombfile.close()
 
 class message():
     def __init__(self):
@@ -133,6 +146,7 @@ msg.create()
 js = json.loads(toJSON(msg))
 
 bigjs = {**bigjs, **js}
+print(bigjs)
 
 class SimpleEcho(WebSocket):
 
@@ -180,5 +194,15 @@ server_thread = threading.Thread(target=doServer)
 server_thread.daemon = True
 server_thread.start()
 
+try:
+    doClock()
+except KeyboardInterrupt:
+    userfile = open("users.encrypted", "wb")
+    bombfile = open("bombs.encrypted", "wb")
 
-doClock()
+    pickle.dump(users, userfile)
+    pickle.dump(bombs, bombfile)
+    userfile.close()
+    bombfile.close()
+    sys.exit()
+
