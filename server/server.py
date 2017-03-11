@@ -144,7 +144,7 @@ class SimpleEcho(WebSocket):
             data = self.data[3:]
             print ("data: " + data)
             if op == "REQ": 
-                self.sendMessage(datalist)
+                self.sendMessage(bigjs)
             if op == "USR":
                 data = json.loads(data)
                 users.append[user(users.len, self, data) ]
