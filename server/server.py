@@ -73,4 +73,47 @@ bigjs = {**bigjs, **js}
 
 bigjs
 
-print (bigjs)
+bigjs["email_address"] = "sean.r.innes@gmail.com"
+bigjs["reddit_username"] = "***REMOVED***"
+bigjs["twitter_username"] = "***REMOVED***"
+bigjs["message_title"] = "Test message"
+bigjs["message_body"] = "plz ignore"
+
+returnstring = json.dumps(bigjs)
+keys = returnstring[1:-1].split(",")
+
+parsepoint = 0
+datalist = []
+
+for integration in integrations:
+    i = integration.jsonSize
+    l = keys[parsepoint:parsepoint + i]
+    parsepoint += i
+    j = "{"
+    for elem in l:
+        j += elem.lstrip()
+        j += ","
+    j = j[:-1]
+    j += "}"
+    print(j)
+    datalist.append(fromJSON(j, integration.data))
+
+l = keys[parsepoint:parsepoint + 2]
+parsepoint += 2
+j = "{"
+for elem in l:
+    j += elem.lstrip()
+    j += ","
+j = j[:-1]
+j += "}"
+print(j)
+msg = fromJSON(j, message)
+
+for i in range(len(integrations)):
+    integrations[i].function(datalist[i], msg)
+
+
+print (datalist)
+
+
+
