@@ -13,8 +13,6 @@ class RedditMessage():
     
     def create(self):
         self.reddit_username      = ""
-        self.reddit_message_title = ""
-        self.reddit_message_body  = ""
 
 def send(msg):
     reddit.redditor(msg.reddit_username).message(msg.reddit_message_title, msg.reddit_message_body)
