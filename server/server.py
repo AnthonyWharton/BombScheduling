@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.5
 from http.server import HTTPServer
 from http.server import BaseHTTPRequestHandler
 import cgi
@@ -13,6 +13,7 @@ from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 import time
 
 users = []
+bombs = []
 
 class message():
     def __init__(self):
@@ -135,6 +136,7 @@ class SimpleEcho(WebSocket):
 
     def handleMessage(self):
         if self.opcode == 1:
+            print(self.data)
             op = self.data[:3]
             data = self.data[3:]
             if op == "REQ": 
@@ -148,7 +150,6 @@ class SimpleEcho(WebSocket):
                 time = data["time"]
                 id = data["id"]
                 bombs.append(bomb(time, users[id]))
-                pass
         # echo message back to client
         self.sendMessage("")
 
@@ -159,5 +160,12 @@ class SimpleEcho(WebSocket):
         print(self.address, 'closed')
 
 server = SimpleWebSocketServer('', 40111, SimpleEcho)
-server.serveforever()
+
+def doServer():
+    server.serveforever()
+
+def doClock():
+    while(True):
+        for bomb in bombs:
+            bomb.check() 
 
