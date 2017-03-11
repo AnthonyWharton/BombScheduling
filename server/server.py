@@ -160,6 +160,7 @@ class SimpleEcho(WebSocket):
                 print("USR request recieved from " + str(self.address[0]))
                 data = json.loads(data)
                 classes = turn_json_into_classes(data)
+                print(classes)
                 valid = True
                 for i in range(len(integrations)):
                     valid = valid and integrations[i].verify(classes[i])
@@ -202,7 +203,6 @@ def doClock():
         time.sleep(5)
         for bomb in bombs:
             bomb.check() 
-doServer()
 
 server_thread = threading.Thread(target=doServer)
 server_thread.daemon = True
