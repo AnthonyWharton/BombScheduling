@@ -4,7 +4,7 @@
 |:---------|-------:|
 | Email | DONE |
 | Twitter | DONE |
-| Reddit ||
+| Reddit | DONE |
 | Twilio - SMS ||
 | Twilio - TTS ||
 | Printer ||
