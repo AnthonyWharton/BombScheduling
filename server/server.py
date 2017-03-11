@@ -1,7 +1,39 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from http.server import HTTPServer
 from http.server import BaseHTTPRequestHandler
 import cgi
+import sys
+import inspect
+import pkgutil
+from os import listdir, path
+from os.path import isfile, join
+
+class integration:
+    def __init__(self, k, f):
+        self.data = k
+        self.function = f
+    def __repr__(self):
+        return "data: " + str(self.data) + "\n" + "function: " + str(self.function)
+
+path = "../apis"
+onlyfiles = [f[:-3] for f in listdir(path) if isfile(join(path, f))]
+integrations = []
+
+for loader, module_name, is_pkg in pkgutil.iter_modules([path]):
+        modules = loader.find_module(module_name).load_module(module_name)
+        print ("MODULE", modules)
+        print (inspect.getmembers(modules, predicate=inspect.isclass))
+        data = [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1]
+        function = [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isfunction) if func[0].startswith('_') is False ][::-1]
+        integrations.append(integration(data, function)) 
+
+print("FINISHED LOADING MODULES")
+
+print (integrations)
+
+
+
+
 
 PORT = 8003
 FILE_PREFIX = "."
