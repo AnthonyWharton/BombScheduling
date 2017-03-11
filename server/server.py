@@ -33,7 +33,7 @@ class bomb():
      
     def check(self):
         if time.time() > self.time:
-            print("Bomb due for " + self.uid)
+            print("Bomb due for " + str(self.uid))
             self.dispatch()
 
     def dispatch(self):
