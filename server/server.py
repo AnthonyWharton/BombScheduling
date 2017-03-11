@@ -142,6 +142,7 @@ for integration in integrations:
     integration.setJsonSize(jx.count(',') + 1)
 
 bigjs = json.dumps(bigjs)
+print(bigjs)
 
 class SimpleEcho(WebSocket):
 
