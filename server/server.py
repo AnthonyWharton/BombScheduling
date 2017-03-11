@@ -191,6 +191,7 @@ class SimpleEcho(WebSocket):
                     bombs.append(bomb(time, uid, msg))
                     self.sendMessage(op + "Success")
             elif op == "LGN":
+                print("LGN request recieved from " + str(self.address[0]))
                 userstosessions[data] = self
                 sessionstousers[self] = data
 
