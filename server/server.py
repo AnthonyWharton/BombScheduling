@@ -27,6 +27,9 @@ try:
 except EOFError:
     bombs = []
 
+print (users)
+print (bombs)
+
 userfile.close()
 bombfile.close()
 
