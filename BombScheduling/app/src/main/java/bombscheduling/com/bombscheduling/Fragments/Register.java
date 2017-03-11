@@ -55,8 +55,7 @@ public class Register extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO REMOVE:
-                successfulRegister();
-
+//                successfulRegister();
                 if (listener.isConnected()) {
                     JSONObject json = new JSONObject();
                     for (int i = 0; i < adapter.getCount(); i++) {
@@ -67,8 +66,8 @@ public class Register extends Fragment {
                             ex.printStackTrace();
                         }
                     }
-//                    listener.sendMessage(Networking.REGISTER_USER, json.toString());
-//                    listener.showLoadingWheel();
+                    listener.sendMessage(Networking.REGISTER_USER, json.toString());
+                    listener.showLoadingWheel();
                     Snackbar.make(getView(), "Registering... \uD83E\uDD14", Snackbar.LENGTH_SHORT).show();
                 } else {
                     Snackbar.make(getView(), "Boohoo! You're not connected \uD83D\uDE2D", Snackbar.LENGTH_LONG).show();
