@@ -10,42 +10,68 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import bombscheduling.com.bombscheduling.Fragments.NewUser;
+import bombscheduling.com.bombscheduling.Fragments.Register;
 import bombscheduling.com.bombscheduling.Networking.Networking;
 
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.CONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.MESSAGE_RECEIVED;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECIEVED_MODES;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_MODES;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.logMessage;
 
 public class ActivityMain extends AppCompatActivity
-                          implements NewUser.NewUserToActivityListener {
+                          implements NewUser.NewUserToActivityListener,
+                                     Register.RegisterToActivityListener {
+
+    public static final String FRAGMENT_NEW_USER = "newUser";
+    public static final String FRAGMENT_REGISTER = "register";
+    public static final String FRAGMENT_LOGIN    = "login";
 
     protected Messenger replyTo = new Messenger(new IncomingHandler());
-    protected Messenger sendTo;
     protected Networking connection;
 
     private FrameLayout fragmentContainer;
     private ProgressBar connectionWheel;
     private Boolean     connectedAlert = true;
+    private long        reconnectTime = 500;
 
     public class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
+            logMessage("ActivityMain", msg);
             switch (msg.what) {
                 case CONNECTED:
-                    Toast.makeText(getBaseContext(), "A CONNECTED!", Toast.LENGTH_SHORT);
                     hideConnectionWheel();
+                    reconnectTime = 500;
                     break;
                 case DISCONNECTED:
-                    Toast.makeText(getBaseContext(), "A DISCONNECTED!", Toast.LENGTH_SHORT);
                     showConnectionWheel();
                     break;
-                case MESSAGE_RECEIVED:
-                    Toast.makeText(getBaseContext(), "A MESSAGE RECEIVED!", Toast.LENGTH_SHORT);
+                case NETWORK_ERROR:
+                    showConnectionWheel();
+                    Snackbar.make(fragmentContainer,
+                            "We're having some trouble with your network..",
+                            Snackbar.LENGTH_LONG)
+                            .show();
+                    connection.close();
+                    reconnectTime *= 1.5; // Recursive doubling on reconnect time.
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            connection.connect();
+                        }
+                    }, reconnectTime);
                     break;
+                case RECIEVED_MODES:
+                    Register f = (Register) getSupportFragmentManager().findFragmentByTag(FRAGMENT_REGISTER);
+                    f.updateFields(msg.getData().getStringArrayList(K_RECIEVED_MODES));
                 default:
                     super.handleMessage(msg);
             }
@@ -54,8 +80,7 @@ public class ActivityMain extends AppCompatActivity
 
     private void initialiseNetworking() {
         Log.d("ActivityMain", "initialiseNetworking()");
-        connection =  new Networking(getBaseContext(), replyTo);
-        sendTo = connection.getReplyTo();
+        connection = new Networking(getBaseContext(), replyTo);
         connection.connect();
     }
 
@@ -73,8 +98,7 @@ public class ActivityMain extends AppCompatActivity
                 "Hold on, We're just connecting you to the server..",
                 Snackbar.LENGTH_LONG)
                 .show();
-        connectedAlert =
-                true;
+        connectedAlert = true;
     }
 
     @Override
@@ -105,7 +129,7 @@ public class ActivityMain extends AppCompatActivity
 
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, firstFragment).commit();
+                .add(R.id.fragment_container, firstFragment, FRAGMENT_NEW_USER).commit();
     }
 
     @Override
@@ -120,7 +144,7 @@ public class ActivityMain extends AppCompatActivity
         super.onRestart();
     }
 
-    public void sendMessage() {
-        connection.sendMessage();
+    public void sendMessage(String opcode, String data) {
+        connection.sendMessage(opcode, data);
     }
 }
