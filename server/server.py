@@ -37,7 +37,7 @@ class bomb():
 
     def dispatch(self):
         print(users[self.uid].opts)
-        keys = json.dumps(users[self.uid].opts)[1:-1].split(",")
+        keys = users[self.uid].opts[1:-1].split(",")
         print(keys)
 
         parsepoint = 0
