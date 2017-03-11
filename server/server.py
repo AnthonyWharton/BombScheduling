@@ -159,7 +159,7 @@ class SimpleEcho(WebSocket):
                 self.sendMessage(op + bigjs)
             elif op == "USR":
                 print("USR request recieved from " + str(self.address[0]))
-                data = json.loads(data)
+                # data = json.loads(data)
                 classes = turn_json_into_classes(data)
                 print(classes)
                 valid = True
@@ -170,7 +170,7 @@ class SimpleEcho(WebSocket):
                 self.sendMessage(op + str(uid))
             elif op == "BMB":
                 print("BMB request recieved from " + str(self.address[0]))
-                # data = json.loads(data)
+                data = json.loads(data)
                 print(data)
                 title = data["title"]
                 body = data["message"]
