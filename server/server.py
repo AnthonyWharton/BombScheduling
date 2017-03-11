@@ -180,6 +180,7 @@ class SimpleEcho(WebSocket):
                         return 
                 uid = randint(0, 10000000)
                 while(uid in list(users.keys)):
+                    print("UID " + str(uid) + " Already taken")
                     uid = randint(0, 10000000)
                 users[uid] = user(uid, classes)
                 self.sendMessage(op + str(uid))
@@ -189,6 +190,7 @@ class SimpleEcho(WebSocket):
                 print(data)
                 bid = randint(0, 10000000)
                 while(bid in list(bombs.keys)):
+                    print("BID " + str(bid) + " Already taken")
                     bid = randint(0, 10000000)
                 title = data["title"]
                 body = data["message"]
