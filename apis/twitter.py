@@ -18,7 +18,6 @@ class TwitterMessage():
 
     def create(self):
         self.twitter_username = ""
-        self.twitter_message  = ""
 
 def send(msg):
     tweet = "@" + msg.twitter_username + " " + msg.twitter_message
