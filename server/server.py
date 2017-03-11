@@ -165,6 +165,7 @@ class SimpleEcho(WebSocket):
                 data = json.loads(data)
                 uid = randint(0, 10000000)
                 print(uid)
+                print(users)
                 users[uid] = user(uid, self, data)
                 print(users)
                 self.sendMessage(op + str(uid))
