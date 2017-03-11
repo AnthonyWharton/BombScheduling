@@ -38,6 +38,7 @@ class bomb():
 
     def dispatch(self):
         datalist = users[self.uid].opts
+        print(userstosessions)
         userstosessions[self.uid].sendMessage("ALR" + self.msg.message_body)
 
         print("about to start integrating")
