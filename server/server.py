@@ -218,7 +218,7 @@ class SimpleEcho(WebSocket):
                 sessionstousers[self] = int(data)
             elif op == "LST":
                 print("LST request recieved from " + str(self.address[0]))
-                user_bombs = [x for x in bombs.values() if x.uid == sessionstousers[self]]
+                user_bombs = [x for x in bombs.values() if x.uid == data]
                 message_json = {}
                 for bomb in user_bombs:
                     bomb_data = {}
@@ -227,7 +227,12 @@ class SimpleEcho(WebSocket):
                     message_json[bid] = bomb_data
                 print(message_json)
                 self.sendMessage(op + json.dumps(message_json))
-
+            elif op == "DEL":
+                try:
+                    done_bombs.append(data)
+                    self._sendMessage(op + "Success")
+                except KeyError:
+                    self._sendMessage(op + "Failure")
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
                 self.sendMessage(op + "Pong")
