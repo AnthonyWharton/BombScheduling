@@ -71,25 +71,25 @@ class bomb():
             integrations[i].function(datalist[i], msg)
         bombs.remove(self)
 
-userfile = open("users.encrypted", "rb")
-bombfile = open("bombs.encrypted", "rb")
 
 try:
+    userfile = open("users.encrypted", "rb")
     users = pickle.load(userfile)
-except EOFError:
+    userfile.close()
+except Exception:
     print("Regenerating users")
     users = {}
 try:
+    bombfile = open("bombs.encrypted", "rb")
     bombs = pickle.load(bombfile)
-except EOFError:
+    bombfile.close()
+except Exception:
     print("Regenerating bombs")
     bombs = []
 
 print (users)
 print (bombs)
 
-userfile.close()
-bombfile.close()
 
 def toJSON(obj):
     return json.dumps(obj.__dict__)
@@ -169,6 +169,7 @@ class SimpleEcho(WebSocket):
             elif op == "BMB":
                 print("BMB request recieved from " + str(self.address[0]))
                 data = json.loads(data)
+                print(data)
                 title = data["title"]
                 message = data["message"]
                 time = data["time"]
