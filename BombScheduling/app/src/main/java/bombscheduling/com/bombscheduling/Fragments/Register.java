@@ -3,7 +3,9 @@ package bombscheduling.com.bombscheduling.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -24,17 +26,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import bombscheduling.com.bombscheduling.ActivityMain;
 import bombscheduling.com.bombscheduling.Networking.Networking;
 import bombscheduling.com.bombscheduling.R;
-
-/**
- * Created by anthony on 11/03/17.
- */
 
 public class Register extends Fragment {
 
     public interface RegisterToActivityListener {
         void sendMessage(String opCode, String data);
+        Boolean isConnected();
+        void showLoadingWheel();
+        void hideLoadingWheel();
     }
 
     private Button goButton;
@@ -52,18 +54,29 @@ public class Register extends Fragment {
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                JSONObject json = new JSONObject();
-                for (int i = 0; i < adapter.getCount(); i++) {
-                    EditText e = (EditText) adapter.getView(i, null, null).findViewById(R.id.list_register_item);
-                    try {
-                        json.put(adapter.getItem(i), e.getText());
-                    } catch (JSONException ex) {
-                        ex.printStackTrace();
+                if (listener.isConnected()) {
+                    JSONObject json = new JSONObject();
+                    for (int i = 0; i < adapter.getCount(); i++) {
+                        EditText e = (EditText) adapter.getView(i, null, null).findViewById(R.id.list_register_item);
+                        try {
+                            json.put(adapter.getItem(i), e.getText());
+                        } catch (JSONException ex) {
+                            ex.printStackTrace();
+                        }
                     }
+                    listener.sendMessage(Networking.REGISTER_USER, json.toString());
+                    listener.showLoadingWheel();
+                    Snackbar.make(getView(), "Registering... \uD83E\uDD14", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(getView(), "Boohoo! You're not connected \uD83D\uDE2D", Snackbar.LENGTH_LONG).show();
                 }
-                listener.sendMessage(Networking.REGISTER_USER, json.toString());
             }
         });
+
+        if (!listener.isConnected()) {
+            listView.setVisibility(View.INVISIBLE);
+            getView().findViewById(R.id.register_error).setVisibility(View.VISIBLE);
+        }
 
         adapter = new RegisterFieldItemsAdapter(getContext(), 0, testFields);
         listView.setAdapter(adapter);
@@ -72,6 +85,28 @@ public class Register extends Fragment {
     public void updateFields(List<String> fields) {
         adapter.clear();
         adapter.addAll(fields);
+        if (!listener.isConnected()) {
+            listView.setVisibility(View.INVISIBLE);
+            getView().findViewById(R.id.register_error).setVisibility(View.VISIBLE);
+        } else {
+            listView.setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.register_error).setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void successfulRegister() {
+        listener.hideLoadingWheel();
+        getFragmentManager().popBackStack();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+        BombSchedule newFragment = new BombSchedule();
+        transaction.replace(R.id.fragment_container, newFragment, ActivityMain.FRAGMENT_BOMB_SCHEDULE);
+        transaction.commit();
+    }
+
+    public void unsuccessfulRegister(String msg) {
+        listener.hideLoadingWheel();
+        Snackbar.make(getView(), "Boohoo! " + msg + " \uD83D\uDE2D", Snackbar.LENGTH_LONG).show();
     }
 
     /**

@@ -3,41 +3,22 @@ package bombscheduling.com.bombscheduling.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import bombscheduling.com.bombscheduling.ActivityMain;
-import bombscheduling.com.bombscheduling.Networking.Networking;
 import bombscheduling.com.bombscheduling.R;
 
-public class NewUser extends Fragment {
+public class BombSchedule extends Fragment {
 
-    public interface NewUserToActivityListener {
+    public interface BombScheduleActivityListener {
         void sendMessage(String opCode, String data);
     }
 
-    private NewUserToActivityListener listener;
-    private Button submit;
+    BombScheduleActivityListener listener;
 
     private void captureAndInitialise() {
-        submit = (Button) getView().findViewById(R.id.newUser_submit);
 
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
-                Register newFragment = new Register();
-                transaction.replace(R.id.fragment_container, newFragment, ActivityMain.FRAGMENT_REGISTER);
-                transaction.addToBackStack(null);
-                transaction.commit();
-                listener.sendMessage(Networking.REQUEST_MODES, "");
-            }
-        });
     }
 
     /**
@@ -51,7 +32,7 @@ public class NewUser extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_new_user, container, false);
+        return inflater.inflate(R.layout.fragment_bomb_schedule, container, false);
     }
 
     /**
@@ -75,7 +56,7 @@ public class NewUser extends Fragment {
 
         // Connect to interface implemented within host Activity
         try {
-            listener = (NewUserToActivityListener) context;
+            listener = (BombScheduleActivityListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement THINGY");
         }
