@@ -169,3 +169,4 @@ def doClock():
         for bomb in bombs:
             bomb.check() 
 
+doServer()
