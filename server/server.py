@@ -173,8 +173,8 @@ class SimpleEcho(WebSocket):
                 message = data["message"]
                 time = data["time"]
                 uid = data["uid"]
-                print(list(users.keys))
-                if uid not in list(users.keys):
+                print(list(users.keys()))
+                if uid not in list(users.keys()):
                     self.sendMessage(op + "Failure")
                 else:
                     bombs.append(bomb(time, uid))
