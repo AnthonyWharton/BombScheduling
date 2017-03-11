@@ -8,33 +8,28 @@ import pkgutil
 from os import listdir, path
 from os.path import isfile, join
 
+class integration:
+    def __init__(self, k, f):
+        self.data = k
+        self.function = f
+    def __repr__(self):
+        return "data: " + str(self.data) + "\n" + "function: " + str(self.function)
+
 path = "../apis"
 onlyfiles = [f[:-3] for f in listdir(path) if isfile(join(path, f))]
-modules = []
-classes = []
-# for file in onlyfiles:
-#     modules.append(path + "." + file)
-# for module in modules:
-#     __import__(module)
-#     print(module)
-#     print(inspect.getmodulename(module))
-#     for name, obj in inspect.getmembers(module):
-#         if inspect.isclass(obj) and not name[:2] == "__":
-#             print(name[:2])
-#             print(name)
-#             classes.append(obj)
-# print(classes)
+integrations = []
 
 for loader, module_name, is_pkg in pkgutil.iter_modules([path]):
-        # Load examples
         modules = loader.find_module(module_name).load_module(module_name)
         print ("MODULE", modules)
         print (inspect.getmembers(modules, predicate=inspect.isclass))
-        classes += [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1]
+        data = [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1]
+        function = [ func[1] for func in inspect.getmembers(modules, predicate=inspect.isfunction) if func[0].startswith('_') is False ][::-1]
+        integrations.append(integration(data, function)) 
 
 print("FINISHED LOADING MODULES")
 
-print (classes)
+print (integrations)
 
 
 
