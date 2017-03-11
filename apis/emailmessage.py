@@ -1,29 +1,15 @@
 import smtplib
-
-# from io import StringIO
-# from email.generator import Generator
-
-import email
-
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# from email.MIMEMultipart import MIMEMultipart
-# from email.MIMEText import MIMEText
-
-# server = smtplib.SMTP('smtp.gmail.com', 587)
-# server.starttls()
-# server.login(fromaddr, "YOUR PASSWORD")
-
 fromaddr = "BombScheduling@gmail.com"
-
 
 server = smtplib.SMTP('smtp.gmail.com', 587)
 server.starttls()
 server.login(fromaddr, "***REMOVED***")
 
-# # This requires enabling some google setting that allows "low access" apps
-# # or something to do things, it's probably okay for the time being.
+# This requires enabling some google setting that allows "low access" apps
+# or something to do things, it's probably okay for the time being.
 
 class EmailMessage():
 
@@ -45,21 +31,13 @@ def send(msg):
     text = message.as_string()
     server.sendmail(fromaddr, msg.email_address, text)
 
-
-    # server.quit()
-
-
-def test():
-    msg = EmailMessage()
-    msg.email_address       = "***REMOVED***"
-    msg.email_message_title = "no"
-    msg.email_message_body  = "So here's something that you can read."
-    send(msg)
-
-
-
-
 # server.quit()
 
-
-test()
+# def test():
+#     msg = EmailMessage()
+#     msg.email_address       = "***REMOVED***"
+#     msg.email_message_title = "no"
+#     msg.email_message_body  = "So here's something that you can read."
+#     send(msg)
+#
+# test()
