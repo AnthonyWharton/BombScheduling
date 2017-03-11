@@ -145,6 +145,7 @@ for integration in integrations:
 
 bigjs = json.dumps(bigjs)
 print(bigjs)
+print(turn_json_into_classes(bigjs))
 
 class SimpleEcho(WebSocket):
 
@@ -169,7 +170,7 @@ class SimpleEcho(WebSocket):
                 self.sendMessage(op + str(uid))
             elif op == "BMB":
                 print("BMB request recieved from " + str(self.address[0]))
-                data = json.loads(data)
+                # data = json.loads(data)
                 print(data)
                 title = data["title"]
                 body = data["message"]
