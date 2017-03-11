@@ -12,16 +12,26 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import bombscheduling.com.bombscheduling.Fragments.NewUser;
+import bombscheduling.com.bombscheduling.Fragments.Register;
 import bombscheduling.com.bombscheduling.Networking.Networking;
 
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.CONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECIEVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.logMessage;
 
 public class ActivityMain extends AppCompatActivity
-                          implements NewUser.NewUserToActivityListener {
+                          implements NewUser.NewUserToActivityListener,
+                                     Register.RegisterToActivityListener {
+
+    public static final String FRAGMENT_NEW_USER = "newUser";
+    public static final String FRAGMENT_REGISTER = "register";
+    public static final String FRAGMENT_LOGIN    = "login";
 
     protected Messenger replyTo = new Messenger(new IncomingHandler());
     protected Networking connection;
@@ -59,6 +69,9 @@ public class ActivityMain extends AppCompatActivity
                         }
                     }, reconnectTime);
                     break;
+                case RECIEVED_MODES:
+                    Register f = (Register) getSupportFragmentManager().findFragmentByTag(FRAGMENT_REGISTER);
+                    f.updateFields(msg.getData().getStringArrayList(K_RECIEVED_MODES));
                 default:
                     super.handleMessage(msg);
             }
@@ -116,7 +129,7 @@ public class ActivityMain extends AppCompatActivity
 
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, firstFragment).commit();
+                .add(R.id.fragment_container, firstFragment, FRAGMENT_NEW_USER).commit();
     }
 
     @Override

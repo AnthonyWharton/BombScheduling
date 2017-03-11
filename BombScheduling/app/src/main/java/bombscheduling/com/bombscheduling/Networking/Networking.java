@@ -1,29 +1,32 @@
 package bombscheduling.com.bombscheduling.Networking;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
+import android.os.Bundle;
 import android.os.Messenger;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.CONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECIEVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NO_MESSAGE;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_MODES;
 
 public class Networking {
 
-    public static final String CONSOLE_LOG   = "   ";
     public static final String PING          = "PNG";
     public static final String REQUEST_MODES = "REQ";
     public static final String REGISTER_USER = "USR";
+    public static final String BOMB          = "BMB";
 
     private Context         context;
     private Messenger       sendTo;
@@ -43,6 +46,8 @@ public class Networking {
         if (client.getConnection().isOpen()) {
             Log.d("Networking", "Message Sent, OP: " + opCode + ", DATA: " + data);
             client.send(opCode + data);
+        } else {
+            MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(NETWORK_ERROR).build());
         }
     }
 
@@ -68,9 +73,35 @@ public class Networking {
 
             @Override
             public void onMessage(String s) {
-                Log.d("Networking", "WebSocket Message Received" + s);
-                String opcode = s.substring(0,2);
+                String opcode = s.substring(0,3);
                 String data   = s.substring(3, s.length());
+                Log.d("Networking", "WebSocket Message Received " + opcode + " " + data);
+
+                if (opcode.equals(PING)) {
+                    // PONG
+                } else if (opcode.equals(REQUEST_MODES)) { // List of stuff to register
+                    try {
+                        JSONObject reader = new JSONObject(data);
+                        Iterator keysToCopyIterator = reader.keys();
+                        ArrayList<String> keysList = new ArrayList<String>();
+                        while(keysToCopyIterator.hasNext()) {
+                            String key = (String) keysToCopyIterator.next();
+                            keysList.add(key);
+                        }
+                        Bundle b = new Bundle();
+                        b.putStringArrayList(K_RECIEVED_MODES, keysList);
+                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
+                                                                           .setWhat(RECIEVED_MODES)
+                                                                           .setBundle(b)
+                                                                           .build());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else if (opcode.equals(REGISTER_USER)) {
+                    // Assigned User ID
+                } else if (opcode.equals(BOMB)) {
+                    // Success/Failure
+                }
             }
 
             @Override
