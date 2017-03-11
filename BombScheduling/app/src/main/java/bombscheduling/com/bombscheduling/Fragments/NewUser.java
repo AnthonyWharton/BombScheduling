@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import bombscheduling.com.bombscheduling.ActivityMain;
+import bombscheduling.com.bombscheduling.Networking.Networking;
 import bombscheduling.com.bombscheduling.R;
 
 /**
@@ -18,7 +20,7 @@ import bombscheduling.com.bombscheduling.R;
 public class NewUser extends Fragment {
 
     public interface NewUserToActivityListener {
-        void sendMessage();
+        void sendMessage(String opCode, String data);
     }
 
     private NewUserToActivityListener listener;
@@ -29,30 +31,30 @@ public class NewUser extends Fragment {
         yesButton = (Button) getView().findViewById(R.id.newUser_yesButton);
         noButton  = (Button) getView().findViewById(R.id.newUser_noButton);
 
+        // Login
         yesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Switch to login
                 Login newFragment = new Login();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, newFragment);
+                transaction.replace(R.id.fragment_container, newFragment, ActivityMain.FRAGMENT_LOGIN);
                 transaction.addToBackStack(null);
                 transaction.commit();
-                listener.sendMessage();
+                listener.sendMessage(Networking.PING, "you have no friends and you suck lol");
             }
         });
 
+        // Register
         noButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Switch to register
                 Register newFragment = new Register();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, newFragment);
+                transaction.replace(R.id.fragment_container, newFragment, ActivityMain.FRAGMENT_REGISTER);
                 transaction.addToBackStack(null);
                 transaction.setTransition(android.R.style.Animation_Translucent);
                 transaction.commit();
-                listener.sendMessage();
+                listener.sendMessage(Networking.REQUEST_MODES, "");
             }
         });
     }
