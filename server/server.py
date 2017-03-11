@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3
 from http.server import HTTPServer
 from http.server import BaseHTTPRequestHandler
 import cgi
@@ -11,6 +11,7 @@ import json
 from collections import namedtuple
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 import time
+import threading
 
 users = []
 bombs = []
@@ -162,11 +163,18 @@ class SimpleEcho(WebSocket):
 server = SimpleWebSocketServer('', 40111, SimpleEcho)
 
 def doServer():
+    print("serving")
     server.serveforever()
 
 def doClock():
+    print("clocking")
     while(True):
         for bomb in bombs:
             bomb.check() 
 
-doServer()
+server_thread = threading.Thread(target=doServer)
+server_thread.daemon = True
+server_thread.start()
+
+
+doClock()
