@@ -216,6 +216,17 @@ class SimpleEcho(WebSocket):
                 print("Logged in user " + str(data))
                 userstosessions[int(data)] = self
                 sessionstousers[self] = int(data)
+            elif op == "LST":
+                print("LST request recieved from " + str(self.address[0]))
+                user_bombs = [x for x in bombs.values() if x.uid == sessionstousers[self]]
+                message_json = {}
+                for bomb in user_bombs:
+                    bomb_data = {}
+                    bomb_data["title"] = bomb.msg.message_title
+                    bomb_data["body"] = bomb.msg.message_body
+                    message_json[bid] = bomb_data
+                print(message_json)
+                self.sendMessage(op + json.dumps(message_json))
 
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
