@@ -39,7 +39,8 @@ public class ActivityMain extends AppCompatActivity
     private FrameLayout fragmentContainer;
     private ProgressBar connectionWheel;
     private Boolean     connectedAlert = true;
-    private long        reconnectTime = 500;
+    private Boolean     errorShown     = false;
+    private long        reconnectTime  = 500;
 
     public class IncomingHandler extends Handler {
         @Override
@@ -49,16 +50,20 @@ public class ActivityMain extends AppCompatActivity
                 case CONNECTED:
                     hideConnectionWheel();
                     reconnectTime = 500;
+                    errorShown = false;
                     break;
                 case DISCONNECTED:
                     showConnectionWheel();
                     break;
                 case NETWORK_ERROR:
                     showConnectionWheel();
-                    Snackbar.make(fragmentContainer,
-                            "We're having some trouble with your network..",
-                            Snackbar.LENGTH_LONG)
-                            .show();
+                    if (!errorShown) {
+                        Snackbar.make(fragmentContainer,
+                                "We're having some trouble with your network..",
+                                Snackbar.LENGTH_LONG)
+                                .show();
+                        errorShown = true;
+                    }
                     connection.close();
                     reconnectTime *= 1.5; // Recursive doubling on reconnect time.
                     final Handler handler = new Handler();
