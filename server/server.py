@@ -131,6 +131,8 @@ for loader, module_name, is_pkg in pkgutil.iter_modules([path]):
 
 print("FINISHED LOADING MODULES")
 
+integrations = sorted(integrations, key=lambda x:x.data.__name__)
+
 print (integrations)
 
 bigjs = {}
