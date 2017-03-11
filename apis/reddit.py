@@ -1,34 +1,10 @@
 import praw
-# import json
 
 reddit = praw.Reddit(client_id='***REMOVED***',
                      client_secret='***REMOVED***',
                      password='***REMOVED***',
                      username='BombScheduling',
                      user_agent='Sending messages (to people that want them) by /u/BombScheduling, StudentHackV project')
-
-
-# user = praw.models.Redditor(reddit, user="***REMOVED***")
-
-# reddit.redditor("***REMOVED***").message("Get Rekt on the regular", "Oh wait you already do.")
-
-
-# class Object:
-
-
-# class MessageReddit(object):
-#     def fromJSON(self):
-
-# def toJSON(obj):
-#     return json.dumps(obj, default=lambda o: o.__dict__,
-#         sort_keys=True, indent=4)
-#
-# def fromJSON(obj):
-#     if '__type__' in obj and obj['__type__'] == 'User':
-#         return User(obj['name'], obj['username'])
-#     return obj
-
-# class
 
 class RedditMessage():
     def __init__(self, reddit_username, reddit_message_title, reddit_message_body):
@@ -39,32 +15,8 @@ class RedditMessage():
 def send(msg):
     reddit.redditor(msg.reddit_username).message(msg.reddit_message_title, msg.reddit_message_body)
 
-def test():
-    msg = RedditMessage("***REMOVED***", "Howdy", "Hello, World!")
-    send(msg)
-
-test()
-
-
-# class Dog():
-#     def __init__(self, value, values):
-#         self.value = value
-#         self.values = values
-
-# dog = Dog(12, ["Apple", 7])
+# def test():
+#     msg = RedditMessage("***REMOVED***", "Howdy", "Hello, World!")
+#     send(msg)
 #
-# dog1 = toJSON(dog)
-
-# dogthing = {
-#     "value": 12,
-#     "values": [
-#         "Apple",
-#         7
-#     ]
-# }
-
-
-# print(dog1)
-#
-# dog2 =  fromJSON(dog1)
-# print(dog2)
+# test()
