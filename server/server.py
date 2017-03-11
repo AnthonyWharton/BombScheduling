@@ -199,6 +199,7 @@ class SimpleEcho(WebSocket):
                     self.sendMessage(op + "Failure")
                 else:
                     bombs[bid] = bomb(time, uid, msg)
+                    print(bombs)
                     self.sendMessage(op + "Success")
             elif op == "LGN":
                 print("LGN request recieved from " + str(self.address[0]))
