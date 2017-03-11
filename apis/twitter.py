@@ -12,22 +12,23 @@ auth.set_access_token(cfg['access_token'], cfg['access_token_secret'])
 api = tweepy.API(auth)
 
 class TwitterMessage():
-    twitter_username = ""
-    twitter_message  = ""
 
     def __init__(self):
         return None
 
+    def create(self):
+        self.twitter_username = ""
+        self.twitter_message  = ""
 
 def send(msg):
     tweet = "@" + msg.twitter_username + " " + msg.twitter_message
     status = api.update_status(status=tweet)
 
-def test():
-    msg = TwitterMessage()
-    # msg.create("***REMOVED***", "Howdy", "Hello, World!")
-    msg.twitter_username      = "***REMOVED***"
-    msg.twitter_message = "WORK"
-    send(msg)
-
-test()
+# def test():
+#     msg = TwitterMessage()
+#     # msg.create("***REMOVED***", "Howdy", "Hello, World!")
+#     msg.twitter_username = "***REMOVED***"
+#     msg.twitter_message  = "WORK"
+#     send(msg)
+#
+# test()
