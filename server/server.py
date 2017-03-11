@@ -192,6 +192,7 @@ class SimpleEcho(WebSocket):
                     self.sendMessage(op + "Success")
             elif op == "LGN":
                 print("LGN request recieved from " + str(self.address[0]))
+                print("Logged in user " + str(data))
                 userstosessions[data] = self
                 sessionstousers[self] = data
 
@@ -208,6 +209,7 @@ class SimpleEcho(WebSocket):
             uid = sessionstousers[self]
             del userstosessions[uid]
             del sessionstousers[self]
+            print("Logged out user " + str(uid))
         except KeyError:
             pass
 
