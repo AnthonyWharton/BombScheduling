@@ -37,25 +37,7 @@ class bomb():
             self.dispatch()
 
     def dispatch(self):
-        keys = users[self.uid].opts[1:-1].split(",")
-
-        parsepoint = 0
-        datalist = []
-
-        for integration in integrations:
-            i = integration.jsonSize
-            l = keys[parsepoint:parsepoint + i]
-            parsepoint += i
-            j = "{"
-            for elem in l:
-                j += elem.lstrip()
-                j += ","
-            j = j[:-1]
-            j += "}"
-            print(j)
-            datalist.append(fromJSON(j, integration.data))
-        
-
+        datalist = users[self.uid].opts
         print("about to start integrating")
         for i in range(len(integrations)):
             print(datalist[i])
@@ -182,7 +164,7 @@ class SimpleEcho(WebSocket):
                 for i in range(len(integrations)):
                     valid = valid and integrations[i].verify(classes[i])
                 uid = randint(0, 10000000)
-                users[uid] = user(uid, json.dumps(data))
+                users[uid] = user(uid, classes)
                 self.sendMessage(op + str(uid))
             elif op == "BMB":
                 print("BMB request recieved from " + str(self.address[0]))
