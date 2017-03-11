@@ -165,10 +165,10 @@ class SimpleEcho(WebSocket):
                 data = json.loads(data)
                 print(data)
                 title = data["title"]
-                message = data["message"]
+                body = data["message"]
                 time = data["time"]
                 uid = data["uid"]
-                msg = message(message, title)
+                msg = message(body, title)
                 if uid not in list(users.keys()):
                     self.sendMessage(op + "Failure")
                 else:
