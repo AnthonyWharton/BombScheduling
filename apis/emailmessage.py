@@ -24,9 +24,9 @@ class EmailMessage():
 def send(details, msg):
     message = email.mime.multipart.MIMEMultipart()
     message['From'] = fromaddr
-    message['To'] = msg.email_address
-    message['Subject'] = msg.email_message_title
-    body = msg.email_message_body
+    message['To'] = details.email_address
+    message['Subject'] = msg.message_title
+    body = msg.message_body
     message.attach(email.mime.text.MIMEText(body, 'plain'))
     text = message.as_string()
     server.sendmail(fromaddr, msg.email_address, text)
