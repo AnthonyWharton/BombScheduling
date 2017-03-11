@@ -158,7 +158,7 @@ class SimpleEcho(WebSocket):
             data = self.data[3:]
             if op == "REQ": 
                 print("REQ request recieved from " + str(self.address[0]))
-                # self.sendMessage(bigjs)
+                self.sendMessage(bigjs)
             elif op == "USR":
                 print("USR request recieved from " + str(self.address[0]))
                 data = json.loads(data)
@@ -172,9 +172,7 @@ class SimpleEcho(WebSocket):
                 bombs.append(bomb(time, users[id]))
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
-                self.sendMessage("PPongPongPongPongPongPongPongPongPongongPongPongPongPongPongPongPPongPongPongPongPongPongPongPongPongPongPongPongongPongPongPongPongPong")
-        # echo message back to client
-        self.sendMessage("")
+                self.sendMessage("Pong")
 
     def handleConnected(self):
         print(self.address, 'connected')
