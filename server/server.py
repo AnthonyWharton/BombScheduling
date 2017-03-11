@@ -146,6 +146,7 @@ msg.create()
 js = json.loads(toJSON(msg))
 
 bigjs = {**bigjs, **js}
+bigjs = json.dumps(bigjs)
 print(bigjs)
 
 class SimpleEcho(WebSocket):
