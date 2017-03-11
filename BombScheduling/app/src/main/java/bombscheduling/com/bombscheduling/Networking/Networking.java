@@ -15,15 +15,18 @@ import java.net.URISyntaxException;
 
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.CONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.MESSAGE_RECEIVED;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NO_MESSAGE;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.sendMessage;
 
 public class Networking {
 
+    public static final String CONSOLE_LOG   = "   ";
+    public static final String PING          = "PNG";
+    public static final String REQUEST_MODES = "REQ";
+    public static final String REGISTER_USER = "USR";
+
     private Context         context;
     private Messenger       sendTo;
-    private Messenger       replyTo = new Messenger(new IncomingHandler());
     private WebSocketClient client;
 
     public Networking(Context context, Messenger replyTo) {
@@ -36,43 +39,15 @@ public class Networking {
         client.connect();
     }
 
-    public void sendMessage() {
-        client.send("you have no friends and you suck lol");
+    public void sendMessage(String opCode, String data) {
+        if (client.getConnection().isOpen()) {
+            Log.d("Networking", "Message Sent, OP: " + opCode + ", DATA: " + data);
+            client.send(opCode + data);
+        }
     }
 
     public void close() {
         client.close();
-    }
-
-    public Messenger getReplyTo() {
-        return replyTo;
-    }
-
-    public class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            MessageHelper.Builder b = new MessageHelper.Builder().setWhat(NO_MESSAGE);
-
-            switch (msg.what) {
-                case CONNECTED:
-                    Toast.makeText(context, "N CONNECTED!", Toast.LENGTH_SHORT);
-                    b.setWhat(CONNECTED);
-                    break;
-                case DISCONNECTED:
-                    Toast.makeText(context, "N DISCONNECTED!", Toast.LENGTH_SHORT);
-                    b.setWhat(DISCONNECTED);
-                    break;
-                case MESSAGE_RECEIVED:
-                    Toast.makeText(context, "N MESSAGE RECEIVED!", Toast.LENGTH_SHORT);
-                    b.setWhat(MESSAGE_RECEIVED);
-                    break;
-                default:
-                    super.handleMessage(msg);
-            }
-
-            Message m = b.build();
-            if (m.what != NO_MESSAGE) MessageHelper.sendMessage(sendTo, m);
-        }
     }
 
     private void initialiseClient() {
@@ -93,8 +68,9 @@ public class Networking {
 
             @Override
             public void onMessage(String s) {
-                Log.d("Networking", "WebSocket Message Received");
-                MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(MESSAGE_RECEIVED).build());
+                Log.d("Networking", "WebSocket Message Received" + s);
+                String opcode = s.substring(0,2);
+                String data   = s.substring(3, s.length());
             }
 
             @Override
@@ -106,7 +82,7 @@ public class Networking {
             @Override
             public void onError(Exception e) {
                 Log.d("Networking", "WebSocket Error " + e.getMessage());
-                MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(DISCONNECTED).build());
+                MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(NETWORK_ERROR).build());
             }
         };
     }
