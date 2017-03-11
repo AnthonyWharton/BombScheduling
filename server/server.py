@@ -228,11 +228,12 @@ class SimpleEcho(WebSocket):
                 print(message_json)
                 self.sendMessage(op + json.dumps(message_json))
             elif op == "DEL":
+                print("DEL request recieved from " + str(self.address[0]))
                 try:
                     done_bombs.append(data)
-                    self._sendMessage(op + "Success")
+                    self.sendMessage(op + "Success")
                 except KeyError:
-                    self._sendMessage(op + "Failure")
+                    self.sendMessage(op + "Failure")
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
                 self.sendMessage(op + "Pong")
