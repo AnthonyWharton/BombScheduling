@@ -21,6 +21,7 @@ public class MessageHelper {
     public static final int REGISTERED_USER = 4;
     public static final int SET_BOMB = 5;
     public static final int RECIEVED_BOMBS = 6;
+    public static final int RECIEVED_ALERT = 7;
 
     public static final String K_RECIEVED_MODES = "RM";
     public static final String K_USER_ID = "UID";
@@ -37,6 +38,7 @@ public class MessageHelper {
             case REGISTERED_USER: return "REGISTERED_USER";
             case SET_BOMB:        return "SET_BOMB";
             case RECIEVED_BOMBS:  return "RECIEVED_BOMBS";
+            case RECIEVED_ALERT:  return "RECIEVED_ALERT";
         }
         return "ERROR, UNKNOWN MESSAGE";
     }
