@@ -69,10 +69,12 @@ public class Register extends Fragment {
                         }
 
                         if (id == -1) {
+                            Log.d("Registering", "");
                             listener.sendMessage(Networking.REGISTER_USER, json.toString());
                             listener.showLoadingWheel();
                             snackbar.setText("Registering... \uD83E\uDD14");
                         } else {
+                            Log.d("Updating", "");
                             JSONObject outer = new JSONObject();
                             outer.put("id", id);
                             outer.put("data", json.toString());
@@ -204,7 +206,6 @@ public class Register extends Fragment {
         }
 
         public View getView(final int position, View convertView, ViewGroup parent) {
-            Log.d("Register", "MEMES" + convertView);
             View view;
             LayoutInflater inflater =
                     (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
@@ -225,11 +226,17 @@ public class Register extends Fragment {
                 editText.setInputType(InputType.TYPE_CLASS_PHONE);
             }
 
-            editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            editText.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void onFocusChange(View v, boolean hasFocus) {
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                @Override
+                public void afterTextChanged(Editable s) {
                     listText.remove(position);
-                    listText.add(position, editText.getText().toString());
+                    listText.add(position, s.toString());
                 }
             });
 
