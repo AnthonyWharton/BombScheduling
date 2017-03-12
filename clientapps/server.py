@@ -35,10 +35,14 @@ def dostuff(msg):
 
     w = Fullscreen_Window()
     w.tk['bg'] = 'red'
-    w.toggle_fullscreen()
+    # w.toggle_fullscreen()
 
-    Button(w.tk, text="Quit", command=w.tk.destroy).pack()
-    # l = Label(w.tk, text="").pack()
+    l = Label(w.tk, text="Incoming Bomb Schedule!!!", font=("Comic Sans", 30), background="red").pack(fill="none")
+    # l.grid(row=0, column=0, padx=(100, 10))
+    # l.pack()
+    l = Label(w.tk, text=title, font=("Comic Sans", 30), background="red").pack(fill="none")
+    l = Label(w.tk, text=body, font=("Comic Sans", 30), background="red").pack()
+    Button(w.tk, text="⊂(▀¯▀⊂)", command=w.tk.destroy, font=("Comic Sans", 30)).pack()
 
     import soundcloud
     from urllib.request import urlopen
@@ -74,19 +78,19 @@ def dostuff(msg):
     p.stop()
     print("Tk exited")
 
-ws = create_connection("ws://139.59.162.84:40111")
-print("Connected")
-ws.send("LGN" + sys.argv[1])
-print("Logged in")
-while(True):
-   mess = ws.recv()
-   print(mess)
-   if mess[:3] == "ALR":
-       dostuff(mess[3:])
+# ws = create_connection("ws://139.59.162.84:40111")
+# print("Connected")
+# ws.send("LGN" + sys.argv[1])
+# print("Logged in")
+# while(True):
+#    mess = ws.recv()
+#    print(mess)
+#    if mess[:3] == "ALR":
+#        dostuff(mess[3:])
 
 
 # dostuff("This is the message")
 # dostuff("apple pie")
 
-# dostuff("{\"title\": \"Apples\", \"body\": \"fiji\"}")
+dostuff("{\"title\": \"Apples\", \"body\": \"fiji\"}")
 # dostuff("{\"title\": \"Apples\", \"body\": \"fiji\"}")
