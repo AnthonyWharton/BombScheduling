@@ -238,14 +238,15 @@ class SimpleEcho(WebSocket):
                 sessionstousers[self] = int(data)
             elif op == "LST":
                 print("LST request recieved from " + str(self.address[0]))
-                user_bombs = [x for x in bombs.values() if x.uid == data]
+                data = int(data)
+                user_bombs = [x for x in list(bombs.values()) if x.uid == data]
                 message_json = {}
                 for b in user_bombs:
                     bomb_data = {}
                     bomb_data["title"] = b.msg.message_title
                     bomb_data["body"] = b.msg.message_body
                     bomb_data["time"] = b.time
-                    message_json[bid] = b_data
+                    message_json[b.bid] = bomb_data
                 print(message_json)
                 self.sendMessage(op + json.dumps(message_json))
             elif op == "DEL":
