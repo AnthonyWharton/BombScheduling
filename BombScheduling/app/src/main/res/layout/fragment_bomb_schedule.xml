@@ -34,6 +34,7 @@
         android:layout_alignLeft="@+id/bs_title"
         android:layout_alignStart="@+id/bs_title"
         android:layout_marginTop="12dp"
+        android:layout_marginRight="16dp"
         android:layout_below="@+id/bs_title"
         android:ems="10"
         android:hint="Message"
