@@ -18,7 +18,10 @@ class TextMessage():
 
 
 def send(details, msg):
-    return client.messages.create(body=msg.message_body, to=details.phone_number, from_=twilnumber)
+    try:
+        return client.messages.create(body=msg.message_body, to=details.phone_number, from_=twilnumber)
+    except Exception:
+        print("Twilio failed")
     # print(message.sid)
 
 def verify(details):
