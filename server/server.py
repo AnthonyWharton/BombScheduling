@@ -14,6 +14,7 @@ import time
 import threading
 import pickle
 from random import randint
+from queue import Queue
 
 class message():
     def __init__(self, message, title):
@@ -55,9 +56,9 @@ class bomb():
                 if self.msg.message_body == "":
                     self.msg.message_body = "Default Message body"
                 if self.msg.message_title == "":
-                    self.msg.message_title = "Incoming Bomb schedule"
+                    self.msg.message_title = "Incoming Bomb Schedule!"
                 integrations[i].function(datalist[i], self.msg)
-        done_bombs.append(self.bid)
+        done_bombs.put(self.bid)
 
 def turn_json_into_classes(jsonstring):
     keys = jsonstring[1:-1].split(",")
@@ -175,8 +176,8 @@ print(bigjs)
 
 userstosessions = {}
 sessionstousers = {}
-done_bombs = []
-new_bombs  = []
+done_bombs = Queue()
+new_bombs  = Queue()
 
 class SimpleEcho(WebSocket):
 
@@ -224,7 +225,7 @@ class SimpleEcho(WebSocket):
                     if uid not in list(users.keys()):
                         self.sendMessage(op + "FWho's that?")
                     else:
-                        new_bombs.append((bid, bomb(time, uid, msg, bid)))
+                        new_bombs.put((bid, bomb(time, uid, msg, bid)))
                         print("Scheduling Success")
                         self.sendMessage(op + "STic Toc.. Bomb set!")
             elif op == "LGN":
@@ -253,7 +254,7 @@ class SimpleEcho(WebSocket):
                 data = int(data)
                 print("DEL request recieved from " + str(self.address[0]))
                 try:
-                    done_bombs.append(data)
+                    done_bombs.put(data)
                     print(done_bombs)
                     self.sendMessage(op + "Success")
                 except KeyError:
@@ -294,12 +295,15 @@ def doClock():
         time.sleep(5)
         for bomb in bombs.values():
             bomb.check() 
-        for bomb in done_bombs:
-            del bombs[bomb]
-        done_bombs.clear()
-        for bid, bomb in new_bombs:
-            bombs[bid] = bomb
-        new_bombs.clear()
+        done_bombs.join()
+        while not done_bombs.empty():
+            del bombs[done_bombs.get()]
+            done_bombs.task_done()
+        new_bombs.join()
+        while not new_bombs.empty():
+            b, i = new_bombs.get()
+            bombs[i] = b
+            done_bombs.task_done()
 
 server_thread = threading.Thread(target=doServer)
 server_thread.daemon = True
