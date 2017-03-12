@@ -16,7 +16,10 @@ class RedditMessage():
         self.reddit_username      = ""
 
 def send(details, msg):
-    reddit.redditor(details.reddit_username).message(msg.message_title, msg.message_body)
+    try:
+        reddit.redditor(details.reddit_username).message(msg.message_title, msg.message_body)
+    except Exception:
+        print("Reddit failed")
 
 def verify(details):
     name = details.reddit_username
