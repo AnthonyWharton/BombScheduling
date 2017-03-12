@@ -1,4 +1,5 @@
 import tweepy
+import re
 
 cfg = {
     "consumer_key"        : "***REMOVED***",
@@ -25,6 +26,13 @@ def send(details, msg):
         status = api.update_status(status=tweet)
     except tweepy.error.TweepError:
         print("Failed to tweet due to duplicate message")
+
+def verify(details):
+    name = details.twitter_username
+    if name == "":
+        return True
+    p = re.compile(r'([A-Za-z0-9_]+)')
+    return p.search(name)
 
 # def test():
 #     details = TwitterMessage()

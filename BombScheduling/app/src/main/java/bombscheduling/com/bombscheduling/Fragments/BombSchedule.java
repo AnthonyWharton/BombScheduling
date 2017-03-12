@@ -37,6 +37,7 @@ public class BombSchedule extends Fragment {
     private EditText message;
     private TextView dateText;
     private TextView timeText;
+    private TextView userID;
     private Button   dateSet;
     private Button   timeSet;
     private Button   submit;
@@ -51,6 +52,7 @@ public class BombSchedule extends Fragment {
         dateSet  = (Button)   getView().findViewById(R.id.bs_date);
         timeSet  = (Button)   getView().findViewById(R.id.bs_time);
         submit   = (Button)   getView().findViewById(R.id.bs_submit);
+        userID   = (TextView) getView().findViewById(R.id.bs_uid);
 
         dateTime = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -104,6 +106,14 @@ public class BombSchedule extends Fragment {
                 }
             }
         });
+
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        uid = sharedPref.getInt(ActivityMain.STORE_USER_ID, -1);
+        if (uid == -1) {
+            userID.setVisibility(View.INVISIBLE);
+        } else {
+            userID.setText("UID: " + uid);
+        }
     }
 
     public void clearFields() {
