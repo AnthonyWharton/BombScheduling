@@ -252,9 +252,9 @@ class SimpleEcho(WebSocket):
             elif op == "DEL":
                 data = int(data)
                 print("DEL request recieved from " + str(self.address[0]))
-                print(bombs)
                 try:
                     done_bombs.append(data)
+                    print(done_bombs)
                     self.sendMessage(op + "Success")
                 except KeyError:
                     self.sendMessage(op + "Failure")
