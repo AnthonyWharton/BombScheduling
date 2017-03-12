@@ -6,7 +6,7 @@
 | Twitter | DONE |
 | Reddit | DONE |
 | Facebook/Messenger ||
-| Twilio - SMS ||
+| Twilio - SMS | DONE |
 | Twilio - TTS ||
 | Printer ||
 | Alexa | No luck :( |

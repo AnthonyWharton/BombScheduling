@@ -11,52 +11,65 @@ import json
 from collections import namedtuple
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 import time
-
-users = []
+import threading
+import pickle
+from random import randint
+from queue import Queue
 
 class message():
-    def __init__(self):
-        pass
-    def create(self):
-        self.message_title = ""
-        self.message_body = ""
+    def __init__(self, message, title):
+        self.message_title = title
+        self.message_body = message
 
 class user():
-    def __init__(self, id, client, opts):
+    def __init__(self, id, opts):
         self.id = id
-        self.client = client
         self.opts = opts
 
 class bomb():
-    def __init__(self, time, user):
+    def __init__(self, time, uid, msg, bid):
         self.time = time
-        self.user = user
+        self.uid = uid
+        self.msg = msg
+        self.bid  = bid
      
     def check(self):
         if time.time() > self.time:
+            print("Bomb due for " + str(self.uid))
             self.dispatch()
 
     def dispatch(self):
-        keys = json.dumps(self.user.opts[1:-1].split(","))
+        datalist = users[self.uid].opts
+        print(userstosessions)
+        try:
+            for session in userstosessions[self.uid]:
+                session.sendMessage("ALR" + self.msg.message_body)
+                print("notifying " + session.address[0])
+        except KeyError:
+            print("Can't find any users online")
 
-        parsepoint = 0
-        datalist = []
+        print("about to start integrating")
+        for i in range(len(integrations)):
+            if not "" in list(datalist[i].__dict__.values()):
+                print(datalist[i])
+                print(self.msg)
+                if self.msg.message_body == "":
+                    self.msg.message_body = "Default Message body"
+                if self.msg.message_title == "":
+                    self.msg.message_title = "Incoming Bomb Schedule!"
+                integrations[i].function(datalist[i], self.msg)
+        done_bombs.put(self.bid)
 
-        for integration in integrations:
-            i = integration.jsonSize
-            l = keys[parsepoint:parsepoint + i]
-            parsepoint += i
-            j = "{"
-            for elem in l:
-                j += elem.lstrip()
-                j += ","
-            j = j[:-1]
-            j += "}"
-            print(j)
-            datalist.append(fromJSON(j, integration.data))
+def turn_json_into_classes(jsonstring):
+    keys = jsonstring[1:-1].split(",")
 
-        l = keys[parsepoint:parsepoint + 2]
-        parsepoint += 2
+    parsepoint = 0
+    datalist = []
+
+    for integration in integrations:
+        i = integration.jsonSize
+        l = keys[parsepoint:parsepoint + i]
+        parsepoint += i
         j = "{"
         for elem in l:
             j += elem.lstrip()
@@ -64,12 +77,22 @@ class bomb():
         j = j[:-1]
         j += "}"
         print(j)
-        msg = fromJSON(j, message)
+        datalist.append(fromJSON(j, integration.data))
+    return datalist
 
-        for i in range(len(integrations)):
-            print(datalist[i])
-            print(msg)
-            integrations[i].function(datalist[i], msg)
+def turn_classes_into_json(classes):
+    retjson = "{"
+    for c in classes:
+        jx = toJSON(c)
+        retjson += jx[1:-1]
+        retjson += ","
+        integration.setJsonSize(jx.count(',') + 1)
+
+    retjson = retjson[:-1]
+    retjson += "}"
+    print(retjson)
+    return retjson
+
 
 def toJSON(obj):
     return json.dumps(obj.__dict__)
@@ -80,9 +103,11 @@ def fromJSON(obj, cl):
     return p
 
 class integration:
-    def __init__(self, k, f):
+    def __init__(self, k, f, v, n):
         self.data = k
         self.function = f
+        self.verify = v
+        self.name = n
     def __repr__(self):
         return "data: " + str(self.data) + "\n" + "function: " + str(self.function)
     def setJsonSize(self, i):
@@ -95,9 +120,7 @@ integrations = []
 for loader, module_name, is_pkg in pkgutil.iter_modules([path]):
         modules = loader.find_module(module_name).load_module(module_name)
         print ("MODULE", modules)
-        print (inspect.getmembers(modules, predicate=inspect.isclass))
-        print (inspect.getmembers(modules, predicate=inspect.isfunction))
-        datas = [ func for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1]
+        datas = [func for func in inspect.getmembers(modules, predicate=inspect.isclass) if func[0].startswith('_') is False ][::-1]
         for d in datas:
             if "message" in d[0].lower():
                 data = d[1]
@@ -107,13 +130,35 @@ for loader, module_name, is_pkg in pkgutil.iter_modules([path]):
         for f in functions:
             if "send" in f[0].lower():
                 function = f[1]
-        integrations.append(integration(data, function)) 
+            if "verify" in f[0].lower():
+                verify = f[1]
+        integrations.append(integration(data, function, verify, module_name.replace("message", "")))
 
 print("FINISHED LOADING MODULES")
 
+try:
+    userfile = open("users.encrypted", "rb")
+    users = pickle.load(userfile)
+    userfile.close()
+except (FileNotFoundError, EOFError):
+    print("Regenerating users")
+    users = {}
+try:
+    bombfile = open("bombs.encrypted", "rb")
+    bombs = pickle.load(bombfile)
+    bombfile.close()
+except (FileNotFoundError, EOFError):
+    print("Regenerating bombs")
+    bombs = {}
+
+print (users)
+print (bombs)
+
+integrations = sorted(integrations, key=lambda x:x.data.__name__)
+
 print (integrations)
 
-bigjs = {}
+bigjs = "{"
 
 for integration in integrations:
     x = integration.data()
@@ -121,43 +166,159 @@ for integration in integrations:
     jx = toJSON(x)
     print(jx)
     print(jx.count(',') + 1)
-    js = json.loads(jx)
-    bigjs = {**bigjs, **js}
+    bigjs += jx[1:-1]
+    bigjs += ","
     integration.setJsonSize(jx.count(',') + 1)
 
-msg = message()
-msg.create()
-js = json.loads(toJSON(msg))
+bigjs = bigjs[:-1]
+bigjs += "}"
+print(bigjs)
 
-bigjs = {**bigjs, **js}
+userstosessions = {}
+sessionstousers = {}
+done_bombs = Queue()
+new_bombs  = Queue()
 
 class SimpleEcho(WebSocket):
 
     def handleMessage(self):
         if self.opcode == 1:
+            print(self.data)
             op = self.data[:3]
             data = self.data[3:]
             if op == "REQ": 
-                self.sendMessage(datalist)
-            if op == "USR":
+                print("REQ request recieved from " + str(self.address[0]))
+                self.sendMessage(op + bigjs)
+            elif op == "USR":
+                print("USR request recieved from " + str(self.address[0]))
+                # data = json.loads(data)
+                classes = turn_json_into_classes(data)
+                print(classes)
+                for i in range(len(integrations)):
+                    if not integrations[i].verify(classes[i]):
+                        print("Invalid " + integrations[i].name)
+                        self.sendMessage(op + "Invalid " + integrations[i].name)
+                        return 
+                uid = randint(0, 10000000)
+                while(uid in list(users.keys())):
+                    uid = randint(0, 10000000)
+                users[uid] = user(uid, classes)
+                self.sendMessage(op + str(uid))
+            elif op == "BMB":
+                print("BMB request recieved from " + str(self.address[0]))
                 data = json.loads(data)
-                users.append[user(users.len, self, data) ]
-                self.sendMessage(str(users.len - 1))
-            if op == "BMB":
-                data = json.loads(data)
+                print(data)
+                bid = randint(0, 10000000)
+                while(bid in list(bombs.keys())):
+                    print("BID " + str(bid) + " Already taken")
+                    bid = randint(0, 10000000)
+                title = data["title"]
+                body = data["message"]
                 time = data["time"]
-                id = data["id"]
-                bombs.append(bomb(time, users[id]))
-                pass
-        # echo message back to client
-        self.sendMessage("")
+                uid = data["uid"]
+                if body == "":
+                    print("No message")
+                    print("scheduling failure")
+                    self.sendMessage(op + "FNot enough text")
+                else:
+                    msg = message(body, title)
+                    if uid not in list(users.keys()):
+                        self.sendMessage(op + "FWho's that?")
+                    else:
+                        new_bombs.put((bid, bomb(time, uid, msg, bid)))
+                        print("Scheduling Success")
+                        self.sendMessage(op + "STic Toc.. Bomb set!")
+            elif op == "LGN":
+                print("LGN request recieved from " + str(self.address[0]))
+                print("Logged in user " + str(data))
+                try:
+                    userstosessions[int(data)].append(self)
+                    print(userstosessions[int(data)])
+                except KeyError:
+                    userstosessions[int(data)] = [self]
+                sessionstousers[self] = int(data)
+            elif op == "LST":
+                print("LST request recieved from " + str(self.address[0]))
+                data = int(data)
+                user_bombs = [x for x in list(bombs.values()) if x.uid == data]
+                message_json = {}
+                for b in user_bombs:
+                    bomb_data = {}
+                    bomb_data["title"] = b.msg.message_title
+                    bomb_data["body"] = b.msg.message_body
+                    bomb_data["time"] = b.time
+                    message_json[b.bid] = bomb_data
+                print(message_json)
+                self.sendMessage(op + json.dumps(message_json))
+            elif op == "DEL":
+                data = int(data)
+                print("DEL request recieved from " + str(self.address[0]))
+                try:
+                    done_bombs.put(data)
+                    print(done_bombs)
+                    self.sendMessage(op + "Success")
+                except KeyError:
+                    self.sendMessage(op + "Failure")
+            elif op == "INF":
+                print("INF request recieved from " + str(self.address[0]))
+                data = int(data)
+                inf = turn_classes_into_json(users[data].opts)
+                self.sendMessage(op + inf)
+            elif op == "PNG":
+                print("PNG request recieved from " + str(self.address[0]))
+                self.sendMessage(op + "Pong")
 
     def handleConnected(self):
         print(self.address, 'connected')
 
     def handleClose(self):
         print(self.address, 'closed')
+        try:
+            uid = sessionstousers[self]
+            userstosessions[uid].remove(self)
+            if len(userstosessions[uid]) == 0:
+                del userstosessions[uid]
+            del sessionstousers[self]
+            print("Logged out user " + str(uid))
+        except KeyError:
+            pass
 
 server = SimpleWebSocketServer('', 40111, SimpleEcho)
-server.serveforever()
+
+def doServer():
+    print("serving")
+    server.serveforever()
+
+def doClock():
+    print("clocking")
+    while(True):
+        time.sleep(0.01)
+        for bomb in bombs.values():
+            bomb.check() 
+        while not done_bombs.empty():
+            try:
+                del bombs[done_bombs.get()]
+            except KeyError:
+                pass
+        while not new_bombs.empty():
+            i, b = new_bombs.get()
+            print(i)
+            bombs[i] = b
+
+server_thread = threading.Thread(target=doServer)
+server_thread.daemon = True
+server_thread.start()
+
+try:
+    doClock()
+except KeyboardInterrupt:
+    print("Saving users and bombs")
+    userfile = open("users.encrypted", "wb")
+    bombfile = open("bombs.encrypted", "wb")
+
+    pickle.dump(users, userfile)
+    pickle.dump(bombs, bombfile)
+    userfile.close()
+    bombfile.close()
+    sys.exit()
 

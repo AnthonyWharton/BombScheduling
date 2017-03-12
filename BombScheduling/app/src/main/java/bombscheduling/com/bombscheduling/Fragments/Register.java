@@ -2,13 +2,16 @@ package bombscheduling.com.bombscheduling.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +27,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import bombscheduling.com.bombscheduling.ActivityMain;
 import bombscheduling.com.bombscheduling.Networking.Networking;
@@ -54,25 +56,39 @@ public class Register extends Fragment {
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO REMOVE:
-                successfulRegister();
-
+                Snackbar snackbar = Snackbar.make(getView(), "", Snackbar.LENGTH_SHORT);
+                snackbar.getView().setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+                SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+                int id = sharedPref.getInt(ActivityMain.STORE_USER_ID, -1);
                 if (listener.isConnected()) {
-                    JSONObject json = new JSONObject();
-                    for (int i = 0; i < adapter.getCount(); i++) {
-                        EditText e = (EditText) adapter.getView(i, null, null).findViewById(R.id.list_register_item);
-                        try {
+                    try {
+                        JSONObject json = new JSONObject();
+                        for (int i = 0; i < adapter.getCount(); i++) {
+                            EditText e = (EditText) adapter.getView(i, null, null).findViewById(R.id.list_register_item);
                             json.put(adapter.getItem(i), e.getText());
-                        } catch (JSONException ex) {
-                            ex.printStackTrace();
                         }
+
+                        if (id == -1) {
+                            listener.sendMessage(Networking.REGISTER_USER, json.toString());
+                            listener.showLoadingWheel();
+                            snackbar.setText("Registering... \uD83E\uDD14");
+                        } else {
+                            JSONObject outer = new JSONObject();
+                            outer.put("id", id);
+                            outer.put("data", json.toString());
+
+                            listener.sendMessage(Networking.UPDATE_USER, outer.toString());
+                            listener.showLoadingWheel();
+                            snackbar.setText("Updating... \uD83E\uDD14");
+                        }
+                    } catch (JSONException ex) {
+                        ex.printStackTrace();
                     }
-//                    listener.sendMessage(Networking.REGISTER_USER, json.toString());
-//                    listener.showLoadingWheel();
-                    Snackbar.make(getView(), "Registering... \uD83E\uDD14", Snackbar.LENGTH_SHORT).show();
                 } else {
-                    Snackbar.make(getView(), "Boohoo! You're not connected \uD83D\uDE2D", Snackbar.LENGTH_LONG).show();
+                    snackbar.setText("Boohoo! You're not connected \uD83D\uDE2D");
+                    snackbar.setDuration(Snackbar.LENGTH_LONG);
                 }
+                snackbar.show();
             }
         });
 
@@ -85,7 +101,7 @@ public class Register extends Fragment {
         listView.setAdapter(adapter);
     }
 
-    public void updateFields(List<String> fields) {
+    public void updateFieldTypes(List<String> fields) {
         adapter.clear();
         adapter.addAll(fields);
         if (!listener.isConnected()) {
@@ -95,6 +111,10 @@ public class Register extends Fragment {
             listView.setVisibility(View.VISIBLE);
             getView().findViewById(R.id.register_error).setVisibility(View.INVISIBLE);
         }
+    }
+
+    public void updateFieldText(List<String> fields) {
+        adapter.setListText(new ArrayList<String>(fields));
     }
 
     public void successfulRegister() {
@@ -109,7 +129,9 @@ public class Register extends Fragment {
 
     public void unsuccessfulRegister(String msg) {
         listener.hideLoadingWheel();
-        Snackbar.make(getView(), "Boohoo! " + msg + " \uD83D\uDE2D", Snackbar.LENGTH_LONG).show();
+        Snackbar snackbar = Snackbar.make(getView(), "Boohoo! " + msg + " \uD83D\uDE2D", Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+        snackbar.show();
     }
 
     /**
@@ -133,6 +155,12 @@ public class Register extends Fragment {
     @Override
     public void onActivityCreated (Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        listener.sendMessage(Networking.REQUEST_MODES, "");
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        int id = sharedPref.getInt(ActivityMain.STORE_USER_ID, -1);
+        if (id != -1) {
+            listener.sendMessage(Networking.USER_INFO, String.valueOf(id));
+        }
         captureAndInitialise();
     }
 
@@ -159,6 +187,11 @@ public class Register extends Fragment {
         private List<String> list;
         private ArrayList<String> listText;
 
+        public void setListText(ArrayList<String> listText) {
+            this.listText = listText;
+            notifyDataSetChanged();
+        }
+
         public RegisterFieldItemsAdapter(Context context, int resource, List<String> objects) {
             super(context, resource, objects);
 
@@ -171,10 +204,13 @@ public class Register extends Fragment {
         }
 
         public View getView(final int position, View convertView, ViewGroup parent) {
+            Log.d("Register", "MEMES" + convertView);
+            View view;
             LayoutInflater inflater =
                     (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.list_register_item, null);
-            EditText editText = (EditText) view.findViewById(R.id.list_register_item);
+            view = inflater.inflate(R.layout.list_register_item, null);
+            final EditText editText = (EditText) view.findViewById(R.id.list_register_item);
+
             String current = list.get(position);
             current = current.replaceAll("_", " ");
             current = WordUtils.capitalize(current);
@@ -189,19 +225,14 @@ public class Register extends Fragment {
                 editText.setInputType(InputType.TYPE_CLASS_PHONE);
             }
 
-            editText.addTextChangedListener(new TextWatcher() {
+            editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-                @Override
-                public void afterTextChanged(Editable s) {
+                public void onFocusChange(View v, boolean hasFocus) {
                     listText.remove(position);
-                    listText.add(position, s.toString());
+                    listText.add(position, editText.getText().toString());
                 }
             });
+
             return view;
         }
     }
