@@ -140,10 +140,10 @@ public class ListBombs extends Fragment {
             if (b.getTitle().equals("")) {
                 title.setText("Incoming Bomb Schedule!");
             } else {
-                if (b.getTitle().length() > 20) title.setText(b.getTitle().substring(0,21) + "..");
+                if (b.getTitle().length() > 30) title.setText(b.getTitle().substring(0,31) + "..");
                 else title.setText(b.getTitle());
             }
-            if (b.getBody().length() > 70) body.setText(b.getBody().substring(0,71) + "..");
+            if (b.getBody().length() > 80) body.setText(b.getBody().substring(0,81) + "..");
             else body.setText(b.getBody());
             String dateTime = "";
             SimpleDateFormat df = new SimpleDateFormat("HH:mm");
