@@ -11,6 +11,8 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:text="Hi! Welcome to Bomb Scheduling!"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
@@ -18,28 +20,69 @@
         android:id="@+id/newUser_subheading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="The app that attacks your schedule!"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         android:layout_below="@+id/newUser_header"
-        android:layout_centerHorizontal="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/newUser_subheading2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="Have you registered yet?"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
-
-    <Button
-        android:id="@+id/newUser_yesButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:text="Do you often forget to check your todo list?"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:layout_below="@+id/newUser_subheading"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:text="Yes, Let me log in!" />
+        android:layout_centerHorizontal="true" />
 
-    <Button
-        android:id="@+id/newUser_noButton"
+    <TextView
+        android:id="@+id/newUser_subheading3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/newUser_yesButton"
+        android:layout_below="@+id/newUser_subheading2"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:text="No, let me register!" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="Do you need a friendly poke when critical tasks need completing?"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+
+    <TextView
+        android:id="@+id/newUser_subheading4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center"
+        android:text="How about getting every single communication method under the sun to remind you?"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:layout_below="@+id/newUser_subheading3"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/newUser_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newUser_subheading4"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="That's a Bomb Schedule!"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+    <Button
+        android:id="@+id/newUser_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Sounds good! Let's get started 💣"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="70dp" />
 
 </RelativeLayout>

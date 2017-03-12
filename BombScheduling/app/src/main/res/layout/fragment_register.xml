@@ -8,10 +8,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Please enter your details:"
+        android:text="Please enter new details:"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/register_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="120dp"
+        android:visibility="invisible"
+        android:gravity="center"
+        android:text="Woah hold up!\n Looks like you're not connected 😣\nCheck your internet is working, and we'll try get things up and running again! 👊"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
 
     <ListView
         android:id="@+id/register_listView"
