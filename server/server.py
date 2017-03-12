@@ -250,6 +250,7 @@ class SimpleEcho(WebSocket):
                 print(message_json)
                 self.sendMessage(op + json.dumps(message_json))
             elif op == "DEL":
+                data = int(data)
                 print("DEL request recieved from " + str(self.address[0]))
                 print(bombs)
                 try:
