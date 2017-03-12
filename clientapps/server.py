@@ -5,17 +5,16 @@ if (len(sys.argv) < 2):
     exit()
 
 
+def dostuff(s):
+    print(s)
 
 ws = create_connection("ws://139.59.162.84:40111")
-print("Sending 'Hello, World'...")
+print("Connected")
 ws.send("LGN" + sys.argv[1])
-print("Sent")
-# print("Receiving...")
-# result =  ws.recv()
-# print("Received '%s'" % result)
-# ws.close()
+print("Logged in")
+while(True):
+   mess = ws.recv()
+   print(mess)
+   if mess[:3] == "ALR":
+       dostuff(mess[3:])
 
-while True:
-    pass
-
-# def main(argv)
