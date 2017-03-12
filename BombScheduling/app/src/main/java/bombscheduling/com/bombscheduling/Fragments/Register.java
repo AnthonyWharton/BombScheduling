@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import bombscheduling.com.bombscheduling.ActivityMain;
 import bombscheduling.com.bombscheduling.Networking.Networking;
@@ -58,19 +58,32 @@ public class Register extends Fragment {
             public void onClick(View v) {
                 Snackbar snackbar = Snackbar.make(getView(), "", Snackbar.LENGTH_SHORT);
                 snackbar.getView().setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+                SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+                int id = sharedPref.getInt(ActivityMain.STORE_USER_ID, -1);
                 if (listener.isConnected()) {
-                    JSONObject json = new JSONObject();
-                    for (int i = 0; i < adapter.getCount(); i++) {
-                        EditText e = (EditText) adapter.getView(i, null, null).findViewById(R.id.list_register_item);
-                        try {
+                    try {
+                        JSONObject json = new JSONObject();
+                        for (int i = 0; i < adapter.getCount(); i++) {
+                            EditText e = (EditText) adapter.getView(i, null, null).findViewById(R.id.list_register_item);
                             json.put(adapter.getItem(i), e.getText());
-                        } catch (JSONException ex) {
-                            ex.printStackTrace();
                         }
+
+                        if (id == -1) {
+                            listener.sendMessage(Networking.REGISTER_USER, json.toString());
+                            listener.showLoadingWheel();
+                            snackbar.setText("Registering... \uD83E\uDD14");
+                        } else {
+                            JSONObject outer = new JSONObject();
+                            outer.put("id", id);
+                            outer.put("data", json.toString());
+
+                            listener.sendMessage(Networking.UPDATE_USER, outer.toString());
+                            listener.showLoadingWheel();
+                            snackbar.setText("Updating... \uD83E\uDD14");
+                        }
+                    } catch (JSONException ex) {
+                        ex.printStackTrace();
                     }
-                    listener.sendMessage(Networking.REGISTER_USER, json.toString());
-                    listener.showLoadingWheel();
-                    snackbar.setText("Registering... \uD83E\uDD14");
                 } else {
                     snackbar.setText("Boohoo! You're not connected \uD83D\uDE2D");
                     snackbar.setDuration(Snackbar.LENGTH_LONG);
@@ -191,10 +204,13 @@ public class Register extends Fragment {
         }
 
         public View getView(final int position, View convertView, ViewGroup parent) {
+            Log.d("Register", "MEMES" + convertView);
+            View view;
             LayoutInflater inflater =
                     (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.list_register_item, null);
-            EditText editText = (EditText) view.findViewById(R.id.list_register_item);
+            view = inflater.inflate(R.layout.list_register_item, null);
+            final EditText editText = (EditText) view.findViewById(R.id.list_register_item);
+
             String current = list.get(position);
             current = current.replaceAll("_", " ");
             current = WordUtils.capitalize(current);
@@ -209,19 +225,14 @@ public class Register extends Fragment {
                 editText.setInputType(InputType.TYPE_CLASS_PHONE);
             }
 
-            editText.addTextChangedListener(new TextWatcher() {
+            editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-                @Override
-                public void afterTextChanged(Editable s) {
+                public void onFocusChange(View v, boolean hasFocus) {
                     listText.remove(position);
-                    listText.add(position, s.toString());
+                    listText.add(position, editText.getText().toString());
                 }
             });
+
             return view;
         }
     }

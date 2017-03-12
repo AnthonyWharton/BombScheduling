@@ -1,14 +1,23 @@
 package bombscheduling.com.bombscheduling;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.Vibrator;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -39,15 +48,17 @@ import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DELETED
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_LIST;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_RESULT;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECIEVED_MODES;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECEIVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_ERROR;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_INFO;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_MODES;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_BOMBS;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_INFO;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_ALERT;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_BOMBS;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_INFO;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.REGISTERED_USER;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.SET_BOMB;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.UPDATED_USER;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.logMessage;
 
 public class ActivityMain extends AppCompatActivity
@@ -130,7 +141,7 @@ public class ActivityMain extends AppCompatActivity
 
                 case RECEIVED_MODES:
                     Register r = (Register) getSupportFragmentManager().findFragmentByTag(FRAGMENT_REGISTER);
-                    r.updateFieldTypes(msg.getData().getStringArrayList(K_RECIEVED_MODES));
+                    r.updateFieldTypes(msg.getData().getStringArrayList(K_RECEIVED_MODES));
                     break;
 
                 case REGISTERED_USER:
@@ -144,7 +155,7 @@ public class ActivityMain extends AppCompatActivity
                         editor.putInt(STORE_USER_ID, uid);
                         editor.apply();
                         connection.sendMessage(Networking.LOGIN, String.valueOf(uid));
-                        snackbar.setText("Wohoo! Time to start scheduling \uD83C\uDF89");
+                        snackbar.setText("Wahoo! Time to start scheduling \uD83C\uDF89");
                         snackbar.show();
                     }
                     break;
@@ -157,7 +168,13 @@ public class ActivityMain extends AppCompatActivity
                     b.clearFields();
                     break;
 
-                case RECIEVED_BOMBS:
+                case RECEIVED_ALERT:
+                    showNotification(msg.getData().getString(K_BOMB_RESULT));
+                    ring();
+                    vibrate();
+                    break;
+
+                case RECEIVED_BOMBS:
                     ArrayList<Bomb> bs = msg.getData().getParcelableArrayList(K_BOMB_LIST);
                     ListBombs fr = (ListBombs) getSupportFragmentManager().findFragmentByTag(FRAGMENT_LIST_BOMBS);
                     fr.updateFields(bs);
@@ -172,15 +189,60 @@ public class ActivityMain extends AppCompatActivity
                     snackbar.show();
                     break;
 
-                case RECIEVED_INFO:
+                case RECEIVED_INFO:
                     Register r3 = (Register) getSupportFragmentManager().findFragmentByTag(FRAGMENT_REGISTER);
                     r3.updateFieldText(msg.getData().getStringArrayList(K_USER_INFO));
                     break;
+
+                case UPDATED_USER:
+                    if (msg.arg1 == 0) {
+                        snackbar.setText("All set! Back to scheduling \uD83C\uDF89");
+                    } else {
+                        snackbar.setText("Uh oh, something went wrong.. \uD83D\uDE33");
+                    }
+                    hideLoadingWheel();
+                    snackbar.show();
 
                 default:
                     super.handleMessage(msg);
             }
         }
+    }
+
+    public void showNotification(String body) {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle("Incoming Bomb Schedule!")
+                        .setContentText(body);
+
+        Intent resultIntent = new Intent(this, ActivityMain.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(ActivityMain.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(0, mBuilder.build());
+    }
+
+    private void vibrate(){
+        Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(3000);
+    }
+
+    private void ring(){
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        r.play();
     }
 
     public void hideLoadingWheel() {
@@ -319,6 +381,5 @@ public class ActivityMain extends AppCompatActivity
             }
             return view;
         }
-
     }
 }

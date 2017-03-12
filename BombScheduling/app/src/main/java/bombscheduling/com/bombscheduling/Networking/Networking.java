@@ -25,16 +25,17 @@ import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DELETED
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_LIST;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_RESULT;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECIEVED_MODES;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECEIVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_ERROR;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_INFO;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_MODES;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_BOMBS;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_INFO;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_ALERT;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_BOMBS;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_INFO;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.REGISTERED_USER;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.SET_BOMB;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.sendMessage;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.UPDATED_USER;
 
 public class Networking {
 
@@ -47,6 +48,7 @@ public class Networking {
     public static final String LIST_BOMBS    = "LST";
     public static final String DELETE_BOMB   = "DEL";
     public static final String USER_INFO     = "INF";
+    public static final String UPDATE_USER   = "UPD";
 
     private Context         context;
     private Messenger       sendTo;
@@ -118,7 +120,7 @@ public class Networking {
                             keysList.add(key);
                         }
                         Bundle b = new Bundle();
-                        b.putStringArrayList(K_RECIEVED_MODES, keysList);
+                        b.putStringArrayList(K_RECEIVED_MODES, keysList);
                         MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
                                                                            .setWhat(RECEIVED_MODES)
                                                                            .setBundle(b)
@@ -168,12 +170,17 @@ public class Networking {
 
                 } else if (opcode.equals(BOMB_ALARM)) {
 
+                    Bundle b = new Bundle();
+                    b.putString(K_BOMB_RESULT, data);
+                    MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
+                            .setWhat(RECEIVED_ALERT)
+                            .setBundle(b)
+                            .build());
                     // Something related to me went BANG
                     Log.d("Networking", "OHSHITWADDAP");
 
                 } else if (opcode.equals(LIST_BOMBS)) {
 
-                    // TODO Deal with listing Bombs
                     try {
                         JSONObject json = new JSONObject(data);
                         Log.d("Networking", "JSON DUMP: " + json.toString());
@@ -193,7 +200,7 @@ public class Networking {
                         Bundle b = new Bundle();
                         b.putParcelableArrayList(K_BOMB_LIST, bombList);
                         MessageHelper.sendMessage(sendTo,
-                                new MessageHelper.Builder().setWhat(RECIEVED_BOMBS).setBundle(b).build());
+                                new MessageHelper.Builder().setWhat(RECEIVED_BOMBS).setBundle(b).build());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -219,11 +226,19 @@ public class Networking {
                         Bundle b = new Bundle();
                         b.putStringArrayList(K_USER_INFO, keysList);
                         MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
-                                .setWhat(RECIEVED_INFO)
+                                .setWhat(RECEIVED_INFO)
                                 .setBundle(b)
                                 .build());
                     } catch (JSONException e) {
                         e.printStackTrace();
+                    }
+
+                } else if (opcode.equals(UPDATE_USER)) {
+
+                    if (data.substring(0,1).equals("S")) {
+                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(UPDATED_USER).setArg1(0).build());
+                    } else {
+                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(UPDATED_USER).setArg1(1).build());
                     }
 
                 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
@@ -13,6 +14,17 @@
         android:text="Time to Schedule?"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:inputType="textAutoComplete" />
+
+    <TextView
+        android:id="@+id/bs_uid"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_below="@id/bs_header"
+        android:layout_marginTop="2dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="UID: 00000000"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
     <EditText
         android:id="@+id/bs_title"
@@ -34,19 +46,11 @@
         android:layout_alignLeft="@+id/bs_title"
         android:layout_alignStart="@+id/bs_title"
         android:layout_marginTop="12dp"
+        android:layout_marginRight="16dp"
         android:layout_below="@+id/bs_title"
         android:ems="10"
         android:hint="Message"
         android:inputType="textAutoCorrect|textAutoComplete|textMultiLine|textLongMessage" />
-
-    <Button
-        android:id="@+id/bs_submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
-        android:text="Schedule it!" />
 
     <TextView
         android:id="@+id/bs_dateText"
@@ -89,5 +93,14 @@
         android:layout_below="@id/bs_date"
         android:layout_alignParentRight="true"
         android:text="Change Time" />
+
+    <Button
+        android:id="@+id/bs_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:text="All good!"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
