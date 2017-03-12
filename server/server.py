@@ -41,9 +41,12 @@ class bomb():
     def dispatch(self):
         datalist = users[self.uid].opts
         print(userstosessions)
+        jsonmessage = {}
+        jsonmessage["title"] = self.msg.message_title
+        jsonmessage["body"]  = self.msg.message_body
         try:
             for session in userstosessions[self.uid]:
-                session.sendMessage("ALR" + self.msg.message_body)
+                session.sendMessage("ALR" + json.dumps(jsonmessage))
                 print("notifying " + session.address[0])
         except KeyError:
             print("Can't find any users online")
