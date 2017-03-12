@@ -271,7 +271,8 @@ class SimpleEcho(WebSocket):
                 uid = int(cont["id"])
                 newdata = cont["data"]
                 users[uid].opts = turn_json_into_classes(newdata)
-                
+                print("Update successfull")
+                self.sendMessage(op + "Success") 
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
                 self.sendMessage(op + "Pong")
