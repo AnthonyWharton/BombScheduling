@@ -190,7 +190,7 @@ public class Networking {
                             int id = new Integer((String) keysToCopyIterator.next());
                             JSONObject nested = json.getJSONObject(String.valueOf(id));
                             Calendar c = Calendar.getInstance();
-                            c.setTime(new Date(nested.getInt("time")*1000));
+                            c.setTime(new Date(nested.getInt("time")*1000L));
                             Bomb b = new Bomb(id,
                                               nested.getString("title"),
                                               nested.getString("body"),
