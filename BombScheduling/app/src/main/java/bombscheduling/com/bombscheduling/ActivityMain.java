@@ -3,7 +3,6 @@ package bombscheduling.com.bombscheduling;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,7 +11,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,12 +20,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,14 +35,17 @@ import bombscheduling.com.bombscheduling.Fragments.Register;
 import bombscheduling.com.bombscheduling.Networking.Networking;
 
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.CONNECTED;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DELETED_BOMB;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_LIST;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_RESULT;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECIEVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_ERROR;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_INFO;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_BOMBS;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_INFO;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.REGISTERED_USER;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.SET_BOMB;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.logMessage;
@@ -131,7 +130,7 @@ public class ActivityMain extends AppCompatActivity
 
                 case RECEIVED_MODES:
                     Register r = (Register) getSupportFragmentManager().findFragmentByTag(FRAGMENT_REGISTER);
-                    r.updateFields(msg.getData().getStringArrayList(K_RECIEVED_MODES));
+                    r.updateFieldTypes(msg.getData().getStringArrayList(K_RECIEVED_MODES));
                     break;
 
                 case REGISTERED_USER:
@@ -162,6 +161,20 @@ public class ActivityMain extends AppCompatActivity
                     ArrayList<Bomb> bs = msg.getData().getParcelableArrayList(K_BOMB_LIST);
                     ListBombs fr = (ListBombs) getSupportFragmentManager().findFragmentByTag(FRAGMENT_LIST_BOMBS);
                     fr.updateFields(bs);
+                    break;
+
+                case DELETED_BOMB:
+                    if (msg.arg1 == 0) {
+                        snackbar.setText("Poof and it's gone! \uD83C\uDF87");
+                    } else {
+                        snackbar.setText("Uh oh, something went wrong.. \uD83D\uDE33");
+                    }
+                    snackbar.show();
+                    break;
+
+                case RECIEVED_INFO:
+                    Register r3 = (Register) getSupportFragmentManager().findFragmentByTag(FRAGMENT_REGISTER);
+                    r3.updateFieldText(msg.getData().getStringArrayList(K_USER_INFO));
                     break;
 
                 default:

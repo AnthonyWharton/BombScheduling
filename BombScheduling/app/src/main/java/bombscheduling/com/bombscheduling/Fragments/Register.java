@@ -2,6 +2,7 @@ package bombscheduling.com.bombscheduling.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -55,8 +56,6 @@ public class Register extends Fragment {
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO REMOVE:
-//                successfulRegister();
                 Snackbar snackbar = Snackbar.make(getView(), "", Snackbar.LENGTH_SHORT);
                 snackbar.getView().setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
                 if (listener.isConnected()) {
@@ -89,7 +88,7 @@ public class Register extends Fragment {
         listView.setAdapter(adapter);
     }
 
-    public void updateFields(List<String> fields) {
+    public void updateFieldTypes(List<String> fields) {
         adapter.clear();
         adapter.addAll(fields);
         if (!listener.isConnected()) {
@@ -99,6 +98,10 @@ public class Register extends Fragment {
             listView.setVisibility(View.VISIBLE);
             getView().findViewById(R.id.register_error).setVisibility(View.INVISIBLE);
         }
+    }
+
+    public void updateFieldText(List<String> fields) {
+        adapter.setListText(new ArrayList<String>(fields));
     }
 
     public void successfulRegister() {
@@ -140,6 +143,11 @@ public class Register extends Fragment {
     public void onActivityCreated (Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         listener.sendMessage(Networking.REQUEST_MODES, "");
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        int id = sharedPref.getInt(ActivityMain.STORE_USER_ID, -1);
+        if (id != -1) {
+            listener.sendMessage(Networking.USER_INFO, String.valueOf(id));
+        }
         captureAndInitialise();
     }
 
@@ -165,6 +173,11 @@ public class Register extends Fragment {
         private Context context;
         private List<String> list;
         private ArrayList<String> listText;
+
+        public void setListText(ArrayList<String> listText) {
+            this.listText = listText;
+            notifyDataSetChanged();
+        }
 
         public RegisterFieldItemsAdapter(Context context, int resource, List<String> objects) {
             super(context, resource, objects);
