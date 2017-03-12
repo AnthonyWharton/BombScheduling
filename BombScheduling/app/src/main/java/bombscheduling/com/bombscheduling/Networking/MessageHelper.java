@@ -21,12 +21,15 @@ public class MessageHelper {
     public static final int REGISTERED_USER = 4;
     public static final int SET_BOMB = 5;
     public static final int RECIEVED_BOMBS = 6;
+    public static final int DELETED_BOMB = 7;
+    public static final int RECIEVED_INFO = 8;
 
     public static final String K_RECIEVED_MODES = "RM";
-    public static final String K_USER_ID = "UID";
+    public static final String K_USER_ID = "ID";
     public static final String K_USER_ERROR = "ER";
     public static final String K_BOMB_RESULT = "BR";
     public static final String K_BOMB_LIST = "BL";
+    public static final String K_USER_INFO = "IN";
 
     public static String messageToString(int what) {
         switch (what) {
@@ -37,6 +40,8 @@ public class MessageHelper {
             case REGISTERED_USER: return "REGISTERED_USER";
             case SET_BOMB:        return "SET_BOMB";
             case RECIEVED_BOMBS:  return "RECIEVED_BOMBS";
+            case DELETED_BOMB:    return "DELETED_BOMB";
+            case RECIEVED_INFO:   return "RECIEVED_INFO";
         }
         return "ERROR, UNKNOWN MESSAGE";
     }

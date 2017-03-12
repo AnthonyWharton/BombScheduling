@@ -21,14 +21,17 @@ import java.util.Iterator;
 import bombscheduling.com.bombscheduling.Bomb;
 
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.CONNECTED;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DELETED_BOMB;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_LIST;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_RESULT;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECIEVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_ERROR;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_INFO;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_BOMBS;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_INFO;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.REGISTERED_USER;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.SET_BOMB;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.sendMessage;
@@ -43,6 +46,7 @@ public class Networking {
     public static final String BOMB_ALARM    = "ALR";
     public static final String LIST_BOMBS    = "LST";
     public static final String DELETE_BOMB   = "DEL";
+    public static final String USER_INFO     = "INF";
 
     private Context         context;
     private Messenger       sendTo;
@@ -196,7 +200,31 @@ public class Networking {
 
                 } else if (opcode.equals(DELETE_BOMB)) {
 
-                    // TODO Success/Failure
+                    if (data.substring(0,1).equals("S")) {
+                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(DELETED_BOMB).setArg1(0).build());
+                    } else {
+                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder().setWhat(DELETED_BOMB).setArg1(1).build());
+                    }
+
+                } else if (opcode.equals(USER_INFO)) {
+
+                    try {
+                        JSONObject reader = new JSONObject(data);
+                        Iterator keysToCopyIterator = reader.keys();
+                        ArrayList<String> keysList = new ArrayList<String>();
+                        while(keysToCopyIterator.hasNext()) {
+                            String key = (String) keysToCopyIterator.next();
+                            keysList.add(reader.getString(key));
+                        }
+                        Bundle b = new Bundle();
+                        b.putStringArrayList(K_USER_INFO, keysList);
+                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
+                                .setWhat(RECIEVED_INFO)
+                                .setBundle(b)
+                                .build());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
                 }
             }
