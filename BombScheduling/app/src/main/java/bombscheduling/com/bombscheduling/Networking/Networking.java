@@ -1,6 +1,9 @@
 package bombscheduling.com.bombscheduling.Networking;
 
 import android.content.Context;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Messenger;
 import android.util.Log;
@@ -28,6 +31,7 @@ import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECIE
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_ERROR;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_MODES;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_ALERT;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECIEVED_BOMBS;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.REGISTERED_USER;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.SET_BOMB;
@@ -164,6 +168,12 @@ public class Networking {
 
                 } else if (opcode.equals(BOMB_ALARM)) {
 
+                    Bundle b = new Bundle();
+                    b.putString(K_BOMB_RESULT, data);
+                    MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
+                            .setWhat(RECIEVED_ALERT)
+                            .setBundle(b)
+                            .build());
                     // Something related to me went BANG
                     Log.d("Networking", "OHSHITWADDAP");
 
