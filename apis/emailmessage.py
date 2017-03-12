@@ -30,7 +30,10 @@ def send(details, msg):
     body = msg.message_body
     message.attach(email.mime.text.MIMEText(body, 'plain'))
     text = message.as_string()
-    server.sendmail(fromaddr, details.email_address, text)
+    try:
+        server.sendmail(fromaddr, details.email_address, text)
+    except Exception:
+        print("Email failed for some reason")
 
 def verify(details):
     addr = details.email_address
