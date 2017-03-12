@@ -1,9 +1,11 @@
 package bombscheduling.com.bombscheduling.Fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +15,6 @@ import bombscheduling.com.bombscheduling.ActivityMain;
 import bombscheduling.com.bombscheduling.Networking.Networking;
 import bombscheduling.com.bombscheduling.R;
 
-/**
- * Created by anthony on 11/03/17.
- */
-
 public class NewUser extends Fragment {
 
     public interface NewUserToActivityListener {
@@ -24,37 +22,21 @@ public class NewUser extends Fragment {
     }
 
     private NewUserToActivityListener listener;
-    private Button yesButton;
-    private Button noButton;
+    private Button submit;
+    private int uid;
 
     private void captureAndInitialise() {
-        yesButton = (Button) getView().findViewById(R.id.newUser_yesButton);
-        noButton  = (Button) getView().findViewById(R.id.newUser_noButton);
+        submit = (Button) getView().findViewById(R.id.newUser_submit);
 
-        // Login
-        yesButton.setOnClickListener(new View.OnClickListener() {
+        submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Login newFragment = new Login();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, newFragment, ActivityMain.FRAGMENT_LOGIN);
-                transaction.addToBackStack(null);
-                transaction.commit();
-                listener.sendMessage(Networking.PING, "you have no friends and you suck lol");
-            }
-        });
-
-        // Register
-        noButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
                 Register newFragment = new Register();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container, newFragment, ActivityMain.FRAGMENT_REGISTER);
                 transaction.addToBackStack(null);
-                transaction.setTransition(android.R.style.Animation_Translucent);
                 transaction.commit();
-                listener.sendMessage(Networking.REQUEST_MODES, "");
             }
         });
     }
@@ -97,6 +79,18 @@ public class NewUser extends Fragment {
             listener = (NewUserToActivityListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement THINGY");
+        }
+
+        // Try Load
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        uid = sharedPref.getInt(ActivityMain.STORE_USER_ID, -1);
+
+        // If there was a thing to load, skip setup and login
+        if (uid != -1) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            BombSchedule newFragment = new BombSchedule();
+            transaction.replace(R.id.fragment_container, newFragment, ActivityMain.FRAGMENT_BOMB_SCHEDULE);
+            transaction.commit();
         }
     }
 

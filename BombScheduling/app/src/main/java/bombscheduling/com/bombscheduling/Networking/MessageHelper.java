@@ -17,16 +17,26 @@ public class MessageHelper {
     public static final int CONNECTED = 0;
     public static final int DISCONNECTED = 1;
     public static final int NETWORK_ERROR = 2;
-    public static final int RECIEVED_MODES = 3;
+    public static final int RECEIVED_MODES = 3;
+    public static final int REGISTERED_USER = 4;
+    public static final int SET_BOMB = 5;
+    public static final int RECIEVED_BOMBS = 6;
 
     public static final String K_RECIEVED_MODES = "RM";
+    public static final String K_USER_ID = "UID";
+    public static final String K_USER_ERROR = "ER";
+    public static final String K_BOMB_RESULT = "BR";
+    public static final String K_BOMB_LIST = "BL";
 
     public static String messageToString(int what) {
         switch (what) {
-            case CONNECTED:      return "CONNECTED";
-            case DISCONNECTED:   return "DISCONNECTED";
-            case NETWORK_ERROR:  return "NETWORK_ERROR";
-            case RECIEVED_MODES: return "RECIEVED_MODES";
+            case CONNECTED:       return "CONNECTED";
+            case DISCONNECTED:    return "DISCONNECTED";
+            case NETWORK_ERROR:   return "NETWORK_ERROR";
+            case RECEIVED_MODES:  return "RECEIVED_MODES";
+            case REGISTERED_USER: return "REGISTERED_USER";
+            case SET_BOMB:        return "SET_BOMB";
+            case RECIEVED_BOMBS:  return "RECIEVED_BOMBS";
         }
         return "ERROR, UNKNOWN MESSAGE";
     }
