@@ -37,7 +37,6 @@ public class NewUser extends Fragment {
                 transaction.replace(R.id.fragment_container, newFragment, ActivityMain.FRAGMENT_REGISTER);
                 transaction.addToBackStack(null);
                 transaction.commit();
-                listener.sendMessage(Networking.REQUEST_MODES, "");
             }
         });
     }
@@ -87,7 +86,6 @@ public class NewUser extends Fragment {
         uid = sharedPref.getInt(ActivityMain.STORE_USER_ID, -1);
 
         // If there was a thing to load, skip setup and login
-        Log.d("NewUser", String.valueOf(uid));
         if (uid != -1) {
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             BombSchedule newFragment = new BombSchedule();
