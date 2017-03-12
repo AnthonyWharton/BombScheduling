@@ -137,9 +137,14 @@ public class ListBombs extends Fragment {
             TextView time  = (TextView) view.findViewById(R.id.list_time);
             Button   done  = (Button)   view.findViewById(R.id.list_done);
 
-            if (b.getTitle().equals("")) title.setText("Incoming Bomb Schedule!");
-            else                         title.setText(b.getTitle());
-            body.setText(b.getBody());
+            if (b.getTitle().equals("")) {
+                title.setText("Incoming Bomb Schedule!");
+            } else {
+                if (b.getTitle().length() > 20) title.setText(b.getTitle().substring(0,21) + "..");
+                else title.setText(b.getTitle());
+            }
+            if (b.getBody().length() > 70) body.setText(b.getBody().substring(0,71) + "..");
+            else body.setText(b.getBody());
             String dateTime = "";
             SimpleDateFormat df = new SimpleDateFormat("HH:mm");
             dateTime = df.format(b.getTime().getTime());
