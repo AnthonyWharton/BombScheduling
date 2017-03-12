@@ -33,8 +33,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,14 +48,16 @@ import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DELETED
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_LIST;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_RESULT;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_RESULT_BODY;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_RESULT_TITLE;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECEIVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_ERROR;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_INFO;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_ALERT;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_BOMBS;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_INFO;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.REGISTERED_USER;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.SET_BOMB;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.UPDATED_USER;
@@ -171,7 +171,7 @@ public class ActivityMain extends AppCompatActivity
                     break;
 
                 case RECEIVED_ALERT:
-                    showNotification(msg.getData().getString(K_BOMB_RESULT));
+                    showNotification(msg.getData().getString(K_BOMB_RESULT_TITLE), msg.getData().getString(K_BOMB_RESULT_BODY));
                     ring();
                     vibrate();
                     break;
@@ -211,19 +211,7 @@ public class ActivityMain extends AppCompatActivity
         }
     }
 
-    public void showNotification(String json) {
-        String body = "";
-        String title = "Incoming Bomb Schedule!";
-        try {
-
-            JSONObject obj = new JSONObject(json);
-            body = obj.getString("body");
-            title = obj.getString("title");
-
-        } catch (Throwable t) {
-            Log.e("My App", "Could not parse malformed JSON: \"" + json + "\"");
-        }
-
+    public void showNotification(String title, String body) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.ic_launcher)

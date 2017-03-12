@@ -29,6 +29,8 @@ public class MessageHelper {
     public static final String K_RECEIVED_MODES = "RM";
     public static final String K_USER_ERROR = "ER";
     public static final String K_BOMB_RESULT = "BR";
+    public static final String K_BOMB_RESULT_TITLE = "BT";
+    public static final String K_BOMB_RESULT_BODY = "BB";
     public static final String K_BOMB_LIST = "BL";
     public static final String K_USER_INFO = "IN";
 

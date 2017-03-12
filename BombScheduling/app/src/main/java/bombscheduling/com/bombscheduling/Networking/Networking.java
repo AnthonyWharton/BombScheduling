@@ -25,14 +25,16 @@ import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DELETED
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.DISCONNECTED;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_LIST;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_RESULT;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_RESULT_BODY;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_BOMB_RESULT_TITLE;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_RECEIVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_ERROR;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.K_USER_INFO;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.NETWORK_ERROR;
-import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_ALERT;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_BOMBS;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_INFO;
+import static bombscheduling.com.bombscheduling.Networking.MessageHelper.RECEIVED_MODES;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.REGISTERED_USER;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.SET_BOMB;
 import static bombscheduling.com.bombscheduling.Networking.MessageHelper.UPDATED_USER;
@@ -170,12 +172,18 @@ public class Networking {
 
                 } else if (opcode.equals(BOMB_ALARM)) {
 
-                    Bundle b = new Bundle();
-                    b.putString(K_BOMB_RESULT, data);
-                    MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
-                            .setWhat(RECEIVED_ALERT)
-                            .setBundle(b)
-                            .build());
+                    try {
+                        Bundle b = new Bundle();
+                        JSONObject obj = new JSONObject(data);
+                        b.putString(K_BOMB_RESULT_TITLE, obj.getString("title"));
+                        b.putString(K_BOMB_RESULT_BODY,  obj.getString("body"));
+                        MessageHelper.sendMessage(sendTo, new MessageHelper.Builder()
+                                .setWhat(RECEIVED_ALERT)
+                                .setBundle(b)
+                                .build());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     // Something related to me went BANG
                     Log.d("Networking", "OHSHITWADDAP");
 
