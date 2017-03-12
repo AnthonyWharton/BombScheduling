@@ -33,6 +33,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -209,11 +211,23 @@ public class ActivityMain extends AppCompatActivity
         }
     }
 
-    public void showNotification(String body) {
+    public void showNotification(String json) {
+        String body = "";
+        String title = "Incoming Bomb Schedule!";
+        try {
+
+            JSONObject obj = new JSONObject(json);
+            body = obj.getString("body");
+            title = obj.getString("title");
+
+        } catch (Throwable t) {
+            Log.e("My App", "Could not parse malformed JSON: \"" + json + "\"");
+        }
+
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle("Incoming Bomb Schedule!")
+                        .setContentTitle(title)
                         .setContentText(body);
 
         Intent resultIntent = new Intent(this, ActivityMain.class);
