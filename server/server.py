@@ -44,6 +44,7 @@ class bomb():
         jsonmessage = {}
         jsonmessage["title"] = self.msg.message_title
         jsonmessage["body"]  = self.msg.message_body
+        print(jsonmessage)
         try:
             for session in userstosessions[self.uid]:
                 session.sendMessage("ALR" + json.dumps(jsonmessage))
