@@ -206,7 +206,7 @@ class SimpleEcho(WebSocket):
                 if body == "" or title == "":
                     print("No message or title")
                     print("scheduling failure")
-                    self.sendMessage(op + "Not enough text \uD83D\uDE13")
+                    self.sendMessage(op + "Not enough text")
                 else:
                     msg = message(body, title)
                     if uid not in list(users.keys()):
