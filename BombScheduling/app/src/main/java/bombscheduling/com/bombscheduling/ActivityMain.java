@@ -7,11 +7,15 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.Vibrator;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
@@ -170,6 +174,8 @@ public class ActivityMain extends AppCompatActivity
 
                 case RECIEVED_ALERT:
                     showNotification(msg.getData().getString(K_BOMB_RESULT));
+                    ring();
+                    vibrate();
                     break;
 
                 default:
@@ -279,6 +285,19 @@ public class ActivityMain extends AppCompatActivity
 
     public Boolean isConnected() {
         return connection.isOpen();
+    }
+
+    public void vibrate(){
+        Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        // Vibrate for 500 milliseconds
+        v.vibrate(5000);
+
+    }
+
+    public void ring(){
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        r.play();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
