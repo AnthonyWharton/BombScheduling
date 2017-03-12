@@ -79,6 +79,18 @@ def turn_json_into_classes(jsonstring):
         datalist.append(fromJSON(j, integration.data))
     return datalist
 
+def turn_classes_into_json(classes):
+    retjson = "{"
+    for c in classes:
+        jx = toJSON(c)
+        retjson += jx[1:-1]
+        retjson += ","
+        integration.setJsonSize(jx.count(',') + 1)
+
+    retjson = retjson[:-1]
+    retjson += "}"
+    print(retjson)
+    return retjson
 
 
 def toJSON(obj):
@@ -243,6 +255,11 @@ class SimpleEcho(WebSocket):
                     self.sendMessage(op + "Success")
                 except KeyError:
                     self.sendMessage(op + "Failure")
+            elif op == "INF":
+                print("INF request recieved from " + str(self.address[0]))
+                data = int(data)
+                inf = turn_classes_into_json(users[data].opts)
+                self.sendMessage(op + inf)
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
                 self.sendMessage(op + "Pong")
