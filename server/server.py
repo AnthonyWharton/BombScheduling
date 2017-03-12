@@ -295,15 +295,12 @@ def doClock():
         time.sleep(5)
         for bomb in bombs.values():
             bomb.check() 
-        done_bombs.join()
         while not done_bombs.empty():
             del bombs[done_bombs.get()]
-            done_bombs.task_done()
-        new_bombs.join()
         while not new_bombs.empty():
-            b, i = new_bombs.get()
+            i, b = new_bombs.get()
+            print(i)
             bombs[i] = b
-            done_bombs.task_done()
 
 server_thread = threading.Thread(target=doServer)
 server_thread.daemon = True
