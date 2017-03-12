@@ -55,7 +55,7 @@ class bomb():
                 if self.msg.message_body == "":
                     self.msg.message_body = "Default Message body"
                 if self.msg.message_title == "":
-                    self.msg.message_title = "Default Message Title"
+                    self.msg.message_title = "Incoming Bomb schedule"
                 integrations[i].function(datalist[i], self.msg)
         done_bombs.append(self.bid)
 
@@ -203,8 +203,8 @@ class SimpleEcho(WebSocket):
                 body = data["message"]
                 time = data["time"]
                 uid = data["uid"]
-                if body == "" or title == "":
-                    print("No message or title")
+                if body == "":
+                    print("No message")
                     print("scheduling failure")
                     self.sendMessage(op + "FNot enough text")
                 else:
