@@ -96,7 +96,7 @@ public class BombSchedule extends Fragment {
                 try {
                     json.put("title",   title.getText());
                     json.put("message", message.getText());
-                    json.put("time",    dateTime.getTime().getTime()/1000);
+                    json.put("time",    dateTime.getTime().getTime()/1000L);
                     json.put("uid",     uid);
                     listener.sendMessage(Networking.BOMB, json.toString());
                 } catch (JSONException e) {

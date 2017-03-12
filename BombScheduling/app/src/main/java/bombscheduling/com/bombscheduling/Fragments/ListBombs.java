@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,17 +45,13 @@ public class ListBombs extends Fragment {
     private TextView error;
     private ListBombFieldItemsAdapter adapter;
 
-    public ListBombs() {
-
-    }
-
     private void captureAndInitialise() {
         listView = (ListView) getView().findViewById(R.id.list_listView);
         error = (TextView) getView().findViewById(R.id.list_error);
 
         if (!listener.isConnected()) {
             listView.setVisibility(View.INVISIBLE);
-            getView().findViewById(R.id.register_error).setVisibility(View.VISIBLE);
+            error.setVisibility(View.VISIBLE);
         }
 
         adapter = new ListBombFieldItemsAdapter(getContext(), 0, new ArrayList<Bomb>());
@@ -63,7 +61,7 @@ public class ListBombs extends Fragment {
     public void updateFields(List<Bomb> fields) {
         adapter.clear();
         adapter.addAll(fields);
-        if (!listener.isConnected()) {
+        if (fields.isEmpty()) {
             listView.setVisibility(View.INVISIBLE);
             error.setVisibility(View.VISIBLE);
         } else {
@@ -158,8 +156,14 @@ public class ListBombs extends Fragment {
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     listener.sendMessage(Networking.DELETE_BOMB, String.valueOf(b.getId()));
-                                    SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-                                    listener.sendMessage(Networking.LIST_BOMBS, String.valueOf(sharedPref.getInt(ActivityMain.STORE_USER_ID, -1)));
+                                    final Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+                                            listener.sendMessage(Networking.LIST_BOMBS, String.valueOf(sharedPref.getInt(ActivityMain.STORE_USER_ID, -1)));
+                                        }
+                                    }, 100);
                                 }})
                             .setNegativeButton(android.R.string.no, null).show();
                 }
