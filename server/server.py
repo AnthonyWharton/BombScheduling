@@ -264,6 +264,15 @@ class SimpleEcho(WebSocket):
                 data = int(data)
                 inf = turn_classes_into_json(users[data].opts)
                 self.sendMessage(op + inf)
+            elif op == "UPD":
+                print("UPD request recieved from " + str(self.address[0]))
+                print(data)
+                cont = json.loads(data)
+                uid = int(cont["id"])
+                newdata = cont["data"]
+                users[uid].opts = turn_json_into_classes(newdata)
+                print("Update successfull")
+                self.sendMessage(op + "Success") 
             elif op == "PNG":
                 print("PNG request recieved from " + str(self.address[0]))
                 self.sendMessage(op + "Pong")
@@ -292,7 +301,7 @@ def doServer():
 def doClock():
     print("clocking")
     while(True):
-        time.sleep(0.01)
+        time.sleep(0.001)
         for bomb in bombs.values():
             bomb.check() 
         while not done_bombs.empty():
