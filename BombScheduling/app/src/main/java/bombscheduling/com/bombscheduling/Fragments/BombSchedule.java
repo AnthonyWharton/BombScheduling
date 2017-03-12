@@ -18,10 +18,8 @@ import android.widget.TimePicker;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import bombscheduling.com.bombscheduling.ActivityMain;
 import bombscheduling.com.bombscheduling.Networking.Networking;
@@ -36,7 +34,7 @@ public class BombSchedule extends Fragment {
     private BombScheduleActivityListener listener;
     private int      uid;
     private EditText title;
-    private EditText description;
+    private EditText message;
     private TextView dateText;
     private TextView timeText;
     private Button   dateSet;
@@ -46,13 +44,13 @@ public class BombSchedule extends Fragment {
     private Calendar dateTime;
 
     private void captureAndInitialise() {
-        title       = (EditText) getView().findViewById(R.id.bs_title);
-        description = (EditText) getView().findViewById(R.id.bs_description);
-        dateText    = (TextView) getView().findViewById(R.id.bs_dateText);
-        timeText    = (TextView) getView().findViewById(R.id.bs_timeText);
-        dateSet     = (Button)   getView().findViewById(R.id.bs_date);
-        timeSet     = (Button)   getView().findViewById(R.id.bs_time);
-        submit      = (Button)   getView().findViewById(R.id.bs_submit);
+        title    = (EditText) getView().findViewById(R.id.bs_title);
+        message  = (EditText) getView().findViewById(R.id.bs_message);
+        dateText = (TextView) getView().findViewById(R.id.bs_dateText);
+        timeText = (TextView) getView().findViewById(R.id.bs_timeText);
+        dateSet  = (Button)   getView().findViewById(R.id.bs_date);
+        timeSet  = (Button)   getView().findViewById(R.id.bs_time);
+        submit   = (Button)   getView().findViewById(R.id.bs_submit);
 
         dateTime = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -97,7 +95,7 @@ public class BombSchedule extends Fragment {
                 JSONObject json = new JSONObject();
                 try {
                     json.put("title",   title.getText());
-                    json.put("message", description.getText());
+                    json.put("message", message.getText());
                     json.put("time",    dateTime.getTime().getTime()/1000);
                     json.put("uid",     uid);
                     listener.sendMessage(Networking.BOMB, json.toString());
@@ -106,6 +104,16 @@ public class BombSchedule extends Fragment {
                 }
             }
         });
+    }
+
+    public void clearFields() {
+        title.setText("");
+        message.setText("");
+        dateTime = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        dateText.setText(df.format(dateTime.getTime()));
+        df = new SimpleDateFormat("HH:mm");
+        timeText.setText(df.format(dateTime.getTime()));
     }
 
     /**

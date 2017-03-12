@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/list_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="120dp"
+        android:visibility="invisible"
+        android:gravity="center"
+        android:text="Doesn't look like you have any bombs scheduled.. 🤷\n\nMaybe try do that first 😜"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+
+    <ListView
+        android:id="@+id/list_listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/register_header"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

@@ -11,7 +11,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="Time to Schedule?"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:inputType="textAutoComplete" />
 
     <EditText
         android:id="@+id/bs_title"
@@ -23,15 +24,15 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="20dp"
         android:ems="10"
-        android:hint="Title"
-        android:inputType="textPersonName" />
+        android:hint="Title (Won't appear on all messages)"
+        android:inputType="textAutoComplete" />
 
     <EditText
-        android:id="@+id/bs_description"
+        android:id="@+id/bs_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Description"
+        android:hint="Message"
         android:inputType="textPersonName"
         android:layout_below="@+id/bs_title"
         android:layout_alignLeft="@+id/bs_title"
