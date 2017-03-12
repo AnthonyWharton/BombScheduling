@@ -292,11 +292,14 @@ def doServer():
 def doClock():
     print("clocking")
     while(True):
-        time.sleep(0.1)
+        time.sleep(0.01)
         for bomb in bombs.values():
             bomb.check() 
         while not done_bombs.empty():
-            del bombs[done_bombs.get()]
+            try:
+                del bombs[done_bombs.get()]
+            except KeyError:
+                pass
         while not new_bombs.empty():
             i, b = new_bombs.get()
             print(i)
