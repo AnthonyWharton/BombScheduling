@@ -3,7 +3,7 @@ import re
 
 reddit = praw.Reddit(client_id='***REMOVED***',
                      client_secret='***REMOVED***',
-                     password='***REMOVED***',
+                     password='***REMOVED',
                      username='BombScheduling',
                      user_agent='Sending messages (to people that want them) by /u/BombScheduling, StudentHackV project')
 
